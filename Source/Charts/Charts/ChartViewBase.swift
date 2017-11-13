@@ -126,7 +126,7 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
     }
     
     /// The legend object containing all data associated with the legend
-    @objc internal var _legend: Legend!
+    @objc internal var _aLegend: Legend!
     
     /// delegate to receive chart events
     @objc open weak var delegate: ChartViewDelegate?
@@ -226,8 +226,8 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
         
         chartDescription = Description()
         
-        _legend = Legend()
-        _legendRenderer = LegendRenderer(viewPortHandler: _viewPortHandler, legend: _legend)
+        _aLegend = Legend()
+        _legendRenderer = LegendRenderer(viewPortHandler: _viewPortHandler, legend: _aLegend)
         
         _xAxis = XAxis()
         
@@ -257,7 +257,7 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
             // calculate how many digits are needed
             setupDefaultFormatter(min: _data!.getYMin(), max: _data!.getYMax())
             
-            for set in _data!.dataSets
+            for set in _data!.setsOfData
             {
                 if set.needsFormatter || set.valueFormatter === _defaultValueFormatter
                 {
@@ -293,7 +293,7 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
     {
         guard let data = _data else { return true }
 
-        if data.entryCount <= 0
+        if data.countOfEntries <= 0
         {
             return true
         }
@@ -310,7 +310,7 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
         fatalError("notifyDataSetChanged() cannot be called on ChartViewBase")
     }
     
-    /// Calculates the offsets of the chart to the border depending on the position of an eventual legend or depending on the length of the y-axis and x-axis labels and their position
+    /// Calculates the offsets of the chart to the border depending on the position of an eventual aLegend or depending on the length of the y-axis and x-axis labels and their position
     @objc internal func calculateOffsets()
     {
         fatalError("calculateOffsets() cannot be called on ChartViewBase")
@@ -328,7 +328,7 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
         // check if a custom formatter is set or not
         var reference = Double(0.0)
         
-        if let data = _data , data.entryCount >= 2
+        if let data = _data , data.countOfEntries >= 2
         {
             reference = fabs(max - min)
         }
@@ -609,12 +609,12 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
             let highlight = _indicesToHighlight[i]
             
             guard let
-                set = data?.getDataSetByIndex(highlight.dataSetIndex),
+                set = data?.getDataSetByIndex(highlight.indexOfDataSet),
                 let e = _data?.entryForHighlight(highlight)
                 else { continue }
             
             let entryIndex = set.entryIndex(entry: e)
-            if entryIndex > Int(Double(set.entryCount) * _animator.phaseX)
+            if entryIndex > Int(Double(set.countOfEntries) * _animator.phaseX)
             {
                 continue
             }
@@ -799,7 +799,7 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
     /// - returns: The Legend object of the chart. This method can be used to get an instance of the legend in order to customize the automatically generated Legend.
     @objc open var legend: Legend
     {
-        return _legend
+        return _aLegend
     }
     
     /// - returns: The renderer object responsible for rendering / drawing the Legend.

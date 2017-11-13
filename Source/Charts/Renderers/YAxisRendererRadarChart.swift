@@ -51,7 +51,7 @@ open class YAxisRendererRadarChart: YAxisRenderer
         // This is used to avoid repeated values when rounding values for display.
         if axis.isGranularityEnabled
         {
-            interval = interval < axis.granularity ? axis.granularity : interval
+            interval = interval < axis.aGranularity ? axis.aGranularity : interval
         }
         
         // Normalize interval
@@ -171,22 +171,22 @@ open class YAxisRendererRadarChart: YAxisRenderer
             return
         }
         
-        let labelFont = yAxis.labelFont
-        let labelTextColor = yAxis.labelTextColor
+        let labelFont = yAxis.fontOfLabel
+        let labelTextColor = yAxis.textColorOfLabel
         
         let center = chart.centerOffsets
         let factor = chart.factor
         
-        let labelLineHeight = yAxis.labelFont.lineHeight
+        let labelLineHeight = yAxis.fontOfLabel.lineHeight
         
         let from = yAxis.isDrawBottomYLabelEntryEnabled ? 0 : 1
-        let to = yAxis.isDrawTopYLabelEntryEnabled ? yAxis.entryCount : (yAxis.entryCount - 1)
+        let to = yAxis.isDrawTopYLabelEntryEnabled ? yAxis.countOfEntries : (yAxis.countOfEntries - 1)
         
         for j in stride(from: from, to: to, by: 1)
         {
             let r = CGFloat(yAxis.entries[j] - yAxis._axisMinimum) * factor
             
-            let p = ChartUtils.getPosition(center: center, dist: r, angle: chart.rotationAngle)
+            let p = ChartUtils.getPosition(center: center, dist: r, angle: chart.angleOfRotation)
             
             let label = yAxis.getFormattedLabel(j)
             
@@ -235,7 +235,7 @@ open class YAxisRendererRadarChart: YAxisRenderer
                 continue
             }
             
-            context.setStrokeColor(l.lineColor.cgColor)
+            context.setStrokeColor(l.colorOfLine.cgColor)
             context.setLineWidth(l.lineWidth)
             if l.lineDashLengths != nil
             {
@@ -250,9 +250,9 @@ open class YAxisRendererRadarChart: YAxisRenderer
             
             context.beginPath()
             
-            for j in 0 ..< (data.maxEntryCountSet?.entryCount ?? 0)
+            for j in 0 ..< (data.maxEntryCountSet?.countOfEntries ?? 0)
             {
-                let p = ChartUtils.getPosition(center: center, dist: r, angle: sliceangle * CGFloat(j) + chart.rotationAngle)
+                let p = ChartUtils.getPosition(center: center, dist: r, angle: sliceangle * CGFloat(j) + chart.angleOfRotation)
                 
                 if j == 0
                 {

@@ -37,16 +37,16 @@ open class IndexAxisValueFormatter: NSObject, IAxisValueFormatter
         
     }
     
-    @objc public init(values: [String])
+    @objc public init(strings: [String])
     {
         super.init()
         
-        self.values = values
+        self.values = strings
     }
     
-    @objc public static func with(values: [String]) -> IndexAxisValueFormatter?
+    @objc public static func with(strings: [String]) -> IndexAxisValueFormatter?
     {
-        return IndexAxisValueFormatter(values: values)
+        return IndexAxisValueFormatter(strings: strings)
     }
     
     open func stringForValue(_ value: Double,

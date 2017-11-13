@@ -95,7 +95,7 @@ open class CombinedChartView: BarLineChartViewBase, CombinedChartDataProvider
             x: h.x, y: h.y,
             xPx: h.xPx, yPx: h.yPx,
             dataIndex: h.dataIndex,
-            dataSetIndex: h.dataSetIndex,
+            indexOfDataSet: h.indexOfDataSet,
             stackIndex: -1,
             axis: h.axis)
     }
@@ -126,7 +126,7 @@ open class CombinedChartView: BarLineChartViewBase, CombinedChartDataProvider
     
     // MARK: - BarChartDataProvider
     
-    open var barData: BarChartData?
+    open var dataBar: BarChartData?
     {
         get
         {
@@ -134,7 +134,7 @@ open class CombinedChartView: BarLineChartViewBase, CombinedChartDataProvider
             {
                 return nil
             }
-            return (_data as! CombinedChartData!).barData
+            return (_data as! CombinedChartData!).dataBar
         }
     }
     
@@ -243,7 +243,7 @@ open class CombinedChartView: BarLineChartViewBase, CombinedChartDataProvider
                 else { continue }
             
             let entryIndex = set.entryIndex(entry: e)
-            if entryIndex > Int(Double(set.entryCount) * _animator.phaseX)
+            if entryIndex > Int(Double(set.countOfEntries) * _animator.phaseX)
             {
                 continue
             }

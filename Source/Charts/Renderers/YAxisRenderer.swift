@@ -38,10 +38,10 @@ open class YAxisRenderer: AxisRendererBase
         }
         
         let xoffset = yAxis.xOffset
-        let yoffset = yAxis.labelFont.lineHeight / 2.5 + yAxis.yOffset
+        let yoffset = yAxis.fontOfLabel.lineHeight / 2.5 + yAxis.yOffset
         
         let dependency = yAxis.axisDependency
-        let labelPosition = yAxis.labelPosition
+        let labelPosition = yAxis.positionOfLabel
         
         var xPos = CGFloat(0.0)
         
@@ -79,7 +79,7 @@ open class YAxisRenderer: AxisRendererBase
             context: context,
             fixedPosition: xPos,
             positions: transformedPositions(),
-            offset: yoffset - yAxis.labelFont.lineHeight,
+            offset: yoffset - yAxis.fontOfLabel.lineHeight,
             textAlign: textAlign)
     }
     
@@ -138,11 +138,11 @@ open class YAxisRenderer: AxisRendererBase
             let yAxis = self.axis as? YAxis
             else { return }
         
-        let labelFont = yAxis.labelFont
-        let labelTextColor = yAxis.labelTextColor
+        let labelFont = yAxis.fontOfLabel
+        let labelTextColor = yAxis.textColorOfLabel
         
         let from = yAxis.isDrawBottomYLabelEntryEnabled ? 0 : 1
-        let to = yAxis.isDrawTopYLabelEntryEnabled ? yAxis.entryCount : (yAxis.entryCount - 1)
+        let to = yAxis.isDrawTopYLabelEntryEnabled ? yAxis.countOfEntries : (yAxis.countOfEntries - 1)
         
         for i in stride(from: from, to: to, by: 1)
         {
@@ -236,11 +236,11 @@ open class YAxisRenderer: AxisRendererBase
             else { return [CGPoint]() }
         
         var positions = [CGPoint]()
-        positions.reserveCapacity(yAxis.entryCount)
+        positions.reserveCapacity(yAxis.countOfEntries)
         
         let entries = yAxis.entries
         
-        for i in stride(from: 0, to: yAxis.entryCount, by: 1)
+        for i in stride(from: 0, to: yAxis.countOfEntries, by: 1)
         {
             positions.append(CGPoint(x: 0.0, y: entries[i]))
         }
@@ -333,7 +333,7 @@ open class YAxisRenderer: AxisRendererBase
             context.move(to: CGPoint(x: viewPortHandler.contentLeft, y: position.y))
             context.addLine(to: CGPoint(x: viewPortHandler.contentRight, y: position.y))
             
-            context.setStrokeColor(l.lineColor.cgColor)
+            context.setStrokeColor(l.colorOfLine.cgColor)
             context.setLineWidth(l.lineWidth)
             if l.lineDashLengths != nil
             {
@@ -356,7 +356,7 @@ open class YAxisRenderer: AxisRendererBase
                 let xOffset: CGFloat = 4.0 + l.xOffset
                 let yOffset: CGFloat = l.lineWidth + labelLineHeight + l.yOffset
                 
-                if l.labelPosition == .rightTop
+                if l.positionOfLabel == .rightTop
                 {
                     ChartUtils.drawText(context: context,
                         text: label,
@@ -366,7 +366,7 @@ open class YAxisRenderer: AxisRendererBase
                         align: .right,
                         attributes: [NSAttributedStringKey.font: l.valueFont, NSAttributedStringKey.foregroundColor: l.valueTextColor])
                 }
-                else if l.labelPosition == .rightBottom
+                else if l.positionOfLabel == .rightBottom
                 {
                     ChartUtils.drawText(context: context,
                         text: label,
@@ -376,7 +376,7 @@ open class YAxisRenderer: AxisRendererBase
                         align: .right,
                         attributes: [NSAttributedStringKey.font: l.valueFont, NSAttributedStringKey.foregroundColor: l.valueTextColor])
                 }
-                else if l.labelPosition == .leftTop
+                else if l.positionOfLabel == .leftTop
                 {
                     ChartUtils.drawText(context: context,
                         text: label,

@@ -24,7 +24,7 @@ open class HorizontalBarHighlighter: BarHighlighter
             guard let high = getHighlight(xValue: Double(pos.y), x: y, y: x)
                 else { return nil }
             
-            if let set = barData.getDataSetByIndex(high.dataSetIndex) as? IBarChartDataSet,
+            if let set = barData.getDataSetByIndex(high.indexOfDataSet) as? IBarChartDataSet,
                 set.isStacked
             {
                 return getStackedHighlight(high: high,

@@ -118,7 +118,7 @@ open class AxisRendererBase: Renderer
         // This is used to avoid repeated values when rounding values for display.
         if axis.granularityEnabled
         {
-            interval = interval < axis.granularity ? axis.granularity : interval
+            interval = interval < axis.aGranularity ? axis.aGranularity : interval
         }
         
         // Normalize interval

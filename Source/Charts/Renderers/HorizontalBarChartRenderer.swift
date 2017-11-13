@@ -34,7 +34,7 @@ open class HorizontalBarChartRenderer: BarChartRenderer
     
     open override func initBuffers()
     {
-        if let barData = dataProvider?.barData
+        if let barData = dataProvider?.dataBar
         {
             // Matche buffers count to dataset count
             if _buffers.count != barData.dataSetCount
@@ -51,8 +51,8 @@ open class HorizontalBarChartRenderer: BarChartRenderer
             
             for i in stride(from: 0, to: barData.dataSetCount, by: 1)
             {
-                let set = barData.dataSets[i] as! IBarChartDataSet
-                let size = set.entryCount * (set.isStacked ? set.stackSize : 1)
+                let set = barData.setsOfData[i] as! IBarChartDataSet
+                let size = set.countOfEntries * (set.isStacked ? set.stackSize : 1)
                 if _buffers[i].rects.count != size
                 {
                     _buffers[i].rects = [CGRect](repeating: CGRect(), count: size)
@@ -69,7 +69,7 @@ open class HorizontalBarChartRenderer: BarChartRenderer
     {
         guard let
             dataProvider = dataProvider,
-            let barData = dataProvider.barData,
+            let barData = dataProvider.dataBar,
             let animator = animator
             else { return }
         
@@ -85,7 +85,7 @@ open class HorizontalBarChartRenderer: BarChartRenderer
         var x: Double
         var y: Double
         
-        for i in stride(from: 0, to: min(Int(ceil(Double(dataSet.entryCount) * animator.phaseX)), dataSet.entryCount), by: 1)
+        for i in stride(from: 0, to: min(Int(ceil(Double(dataSet.countOfEntries) * animator.phaseX)), dataSet.countOfEntries), by: 1)
         {
             guard let e = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
             
@@ -203,14 +203,14 @@ open class HorizontalBarChartRenderer: BarChartRenderer
         {
             guard
                 let animator = animator,
-                let barData = dataProvider.barData
+                let barData = dataProvider.dataBar
                 else { return }
             
             let barWidth = barData.barWidth
             let barWidthHalf = barWidth / 2.0
             var x: Double = 0.0
             
-            for i in stride(from: 0, to: min(Int(ceil(Double(dataSet.entryCount) * animator.phaseX)), dataSet.entryCount), by: 1)
+            for i in stride(from: 0, to: min(Int(ceil(Double(dataSet.countOfEntries) * animator.phaseX)), dataSet.countOfEntries), by: 1)
             {
                 guard let e = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
                 
@@ -309,12 +309,12 @@ open class HorizontalBarChartRenderer: BarChartRenderer
         {
             guard
                 let dataProvider = dataProvider,
-                let barData = dataProvider.barData,
+                let barData = dataProvider.dataBar,
                 let animator = animator,
                 let viewPortHandler = self.viewPortHandler
                 else { return }
             
-            var dataSets = barData.dataSets
+            var setsOfData = barData.setsOfData
             
             let textAlign = NSTextAlignment.left
             
@@ -325,34 +325,34 @@ open class HorizontalBarChartRenderer: BarChartRenderer
             
             for dataSetIndex in 0 ..< barData.dataSetCount
             {
-                guard let dataSet = dataSets[dataSetIndex] as? IBarChartDataSet else { continue }
+                guard let setOfData = setsOfData[dataSetIndex] as? IBarChartDataSet else { continue }
                 
-                if !shouldDrawValues(forDataSet: dataSet) || !(dataSet.isDrawIconsEnabled && dataSet.isVisible)
+                if !shouldDrawValues(forDataSet: setOfData) || !(setOfData.isDrawIconsEnabled && setOfData.isVisible)
                 {
                     continue
                 }
                 
-                let isInverted = dataProvider.isInverted(axis: dataSet.axisDependency)
+                let isInverted = dataProvider.isInverted(axis: setOfData.axisDependency)
                 
-                let valueFont = dataSet.valueFont
+                let valueFont = setOfData.valueFont
                 let yOffset = -valueFont.lineHeight / 2.0
                 
-                guard let formatter = dataSet.valueFormatter else { continue }
+                guard let formatter = setOfData.valueFormatter else { continue }
                 
-                let trans = dataProvider.getTransformer(forAxis: dataSet.axisDependency)
+                let trans = dataProvider.getTransformer(forAxis: setOfData.axisDependency)
                 
                 let phaseY = animator.phaseY
                 
-                let iconsOffset = dataSet.iconsOffset
+                let iconsOffset = setOfData.iconsOffset
                 
                 let buffer = _buffers[dataSetIndex]
                 
                 // if only single values are drawn (sum)
-                if !dataSet.isStacked
+                if !setOfData.isStacked
                 {
-                    for j in 0 ..< Int(ceil(Double(dataSet.entryCount) * animator.phaseX))
+                    for j in 0 ..< Int(ceil(Double(setOfData.countOfEntries) * animator.phaseX))
                     {
-                        guard let e = dataSet.entryForIndex(j) as? BarChartDataEntry else { continue }
+                        guard let e = setOfData.entryForIndex(j) as? BarChartDataEntry else { continue }
                         
                         let rect = buffer.rects[j]
                         
@@ -391,7 +391,7 @@ open class HorizontalBarChartRenderer: BarChartRenderer
                             negOffset = -negOffset - valueTextWidth
                         }
                         
-                        if dataSet.isDrawValuesEnabled
+                        if setOfData.isDrawValuesEnabled
                         {
                             drawValue(
                                 context: context,
@@ -401,10 +401,10 @@ open class HorizontalBarChartRenderer: BarChartRenderer
                                 yPos: y + yOffset,
                                 font: valueFont,
                                 align: textAlign,
-                                color: dataSet.valueTextColorAt(j))
+                                color: setOfData.valueTextColorAt(j))
                         }
                         
-                        if let icon = e.icon, dataSet.isDrawIconsEnabled
+                        if let icon = e.icon, setOfData.isDrawIconsEnabled
                         {
                             var px = (rect.origin.x + rect.size.width)
                                 + (val >= 0.0 ? posOffset : negOffset)
@@ -428,9 +428,9 @@ open class HorizontalBarChartRenderer: BarChartRenderer
                     
                     var bufferIndex = 0
                     
-                    for index in 0 ..< Int(ceil(Double(dataSet.entryCount) * animator.phaseX))
+                    for index in 0 ..< Int(ceil(Double(setOfData.countOfEntries) * animator.phaseX))
                     {
-                        guard let e = dataSet.entryForIndex(index) as? BarChartDataEntry else { continue }
+                        guard let e = setOfData.entryForIndex(index) as? BarChartDataEntry else { continue }
                         
                         let rect = buffer.rects[bufferIndex]
                         
@@ -472,7 +472,7 @@ open class HorizontalBarChartRenderer: BarChartRenderer
                                 negOffset = -negOffset - valueTextWidth
                             }
                             
-                            if dataSet.isDrawValuesEnabled
+                            if setOfData.isDrawValuesEnabled
                             {
                                 drawValue(
                                     context: context,
@@ -482,10 +482,10 @@ open class HorizontalBarChartRenderer: BarChartRenderer
                                     yPos: rect.origin.y + yOffset,
                                     font: valueFont,
                                     align: textAlign,
-                                    color: dataSet.valueTextColorAt(index))
+                                    color: setOfData.valueTextColorAt(index))
                             }
                             
-                            if let icon = e.icon, dataSet.isDrawIconsEnabled
+                            if let icon = e.icon, setOfData.isDrawIconsEnabled
                             {
                                 var px = (rect.origin.x + rect.size.width)
                                     + (val >= 0.0 ? posOffset : negOffset)
@@ -576,7 +576,7 @@ open class HorizontalBarChartRenderer: BarChartRenderer
                                     continue
                                 }
                                 
-                                if dataSet.isDrawValuesEnabled
+                                if setOfData.isDrawValuesEnabled
                                 {
                                     drawValue(context: context,
                                         value: valueText,
@@ -584,10 +584,10 @@ open class HorizontalBarChartRenderer: BarChartRenderer
                                         yPos: y + yOffset,
                                         font: valueFont,
                                         align: textAlign,
-                                        color: dataSet.valueTextColorAt(index))
+                                        color: setOfData.valueTextColorAt(index))
                                 }
                                 
-                                if let icon = e.icon, dataSet.isDrawIconsEnabled
+                                if let icon = e.icon, setOfData.isDrawIconsEnabled
                                 {
                                     ChartUtils.drawImage(
                                         context: context,
@@ -610,7 +610,7 @@ open class HorizontalBarChartRenderer: BarChartRenderer
     {
         guard let data = dataProvider?.data
             else { return false }
-        return data.entryCount < Int(CGFloat(dataProvider?.maxVisibleCount ?? 0) * (self.viewPortHandler?.scaleY ?? 1.0))
+        return data.countOfEntries < Int(CGFloat(dataProvider?.maxVisibleCount ?? 0) * (self.viewPortHandler?.scaleY ?? 1.0))
     }
     
     /// Sets the drawing position of the highlight object based on the riven bar-rect.

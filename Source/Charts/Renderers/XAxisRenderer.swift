@@ -72,14 +72,14 @@ open class XAxisRenderer: AxisRendererBase
         
         let longest = xAxis.getLongestLabel()
         
-        let labelSize = longest.size(withAttributes: [NSAttributedStringKey.font: xAxis.labelFont])
+        let labelSize = longest.size(withAttributes: [NSAttributedStringKey.font: xAxis.fontOfLabel])
         
         let labelWidth = labelSize.width
         let labelHeight = labelSize.height
         
         let labelRotatedSize = ChartUtils.sizeOfRotatedRectangle(labelSize, degrees: xAxis.labelRotationAngle)
         
-        xAxis.labelWidth = labelWidth
+        xAxis.widthOfLabel = labelWidth
         xAxis.labelHeight = labelHeight
         xAxis.labelRotatedWidth = labelRotatedSize.width
         xAxis.labelRotatedHeight = labelRotatedSize.height
@@ -99,19 +99,19 @@ open class XAxisRenderer: AxisRendererBase
         
         let yOffset = xAxis.yOffset
         
-        if xAxis.labelPosition == .top
+        if xAxis.positionOfLabel == .top
         {
             drawLabels(context: context, pos: viewPortHandler.contentTop - yOffset, anchor: CGPoint(x: 0.5, y: 1.0))
         }
-        else if xAxis.labelPosition == .topInside
+        else if xAxis.positionOfLabel == .topInside
         {
             drawLabels(context: context, pos: viewPortHandler.contentTop + yOffset + xAxis.labelRotatedHeight, anchor: CGPoint(x: 0.5, y: 1.0))
         }
-        else if xAxis.labelPosition == .bottom
+        else if xAxis.positionOfLabel == .bottom
         {
             drawLabels(context: context, pos: viewPortHandler.contentBottom + yOffset, anchor: CGPoint(x: 0.5, y: 0.0))
         }
-        else if xAxis.labelPosition == .bottomInside
+        else if xAxis.positionOfLabel == .bottomInside
         {
             drawLabels(context: context, pos: viewPortHandler.contentBottom - yOffset - xAxis.labelRotatedHeight, anchor: CGPoint(x: 0.5, y: 0.0))
         }
@@ -149,9 +149,9 @@ open class XAxisRenderer: AxisRendererBase
             context.setLineDash(phase: 0.0, lengths: [])
         }
         
-        if xAxis.labelPosition == .top
-            || xAxis.labelPosition == .topInside
-            || xAxis.labelPosition == .bothSided
+        if xAxis.positionOfLabel == .top
+            || xAxis.positionOfLabel == .topInside
+            || xAxis.positionOfLabel == .bothSided
         {
             _axisLineSegmentsBuffer[0].x = viewPortHandler.contentLeft
             _axisLineSegmentsBuffer[0].y = viewPortHandler.contentTop
@@ -160,9 +160,9 @@ open class XAxisRenderer: AxisRendererBase
             context.strokeLineSegments(between: _axisLineSegmentsBuffer)
         }
         
-        if xAxis.labelPosition == .bottom
-            || xAxis.labelPosition == .bottomInside
-            || xAxis.labelPosition == .bothSided
+        if xAxis.positionOfLabel == .bottom
+            || xAxis.positionOfLabel == .bottomInside
+            || xAxis.positionOfLabel == .bothSided
         {
             _axisLineSegmentsBuffer[0].x = viewPortHandler.contentLeft
             _axisLineSegmentsBuffer[0].y = viewPortHandler.contentBottom
@@ -190,8 +190,8 @@ open class XAxisRenderer: AxisRendererBase
         #endif
         paraStyle.alignment = .center
         
-        let labelAttrs: [NSAttributedStringKey : Any] = [NSAttributedStringKey.font: xAxis.labelFont,
-            NSAttributedStringKey.foregroundColor: xAxis.labelTextColor,
+        let labelAttrs: [NSAttributedStringKey : Any] = [NSAttributedStringKey.font: xAxis.fontOfLabel,
+            NSAttributedStringKey.foregroundColor: xAxis.textColorOfLabel,
             NSAttributedStringKey.paragraphStyle: paraStyle]
         let labelRotationAngleRadians = xAxis.labelRotationAngle * ChartUtils.Math.FDEG2RAD
         
@@ -233,7 +233,7 @@ open class XAxisRenderer: AxisRendererBase
                 if xAxis.isAvoidFirstLastClippingEnabled
                 {
                     // avoid clipping of the last
-                    if i == xAxis.entryCount - 1 && xAxis.entryCount > 1
+                    if i == xAxis.countOfEntries - 1 && xAxis.countOfEntries > 1
                     {
                         let width = labelns.boundingRect(with: labelMaxSize, options: .usesLineFragmentOrigin, attributes: labelAttrs, context: nil).size.width
                         
@@ -408,7 +408,7 @@ open class XAxisRenderer: AxisRendererBase
         context.move(to: CGPoint(x: position.x, y: viewPortHandler.contentTop))
         context.addLine(to: CGPoint(x: position.x, y: viewPortHandler.contentBottom))
         
-        context.setStrokeColor(limitLine.lineColor.cgColor)
+        context.setStrokeColor(limitLine.colorOfLine.cgColor)
         context.setLineWidth(limitLine.lineWidth)
         if limitLine.lineDashLengths != nil
         {
@@ -437,7 +437,7 @@ open class XAxisRenderer: AxisRendererBase
             
             let xOffset: CGFloat = limitLine.lineWidth + limitLine.xOffset
             
-            if limitLine.labelPosition == .rightTop
+            if limitLine.positionOfLabel == .rightTop
             {
                 ChartUtils.drawText(context: context,
                     text: label,
@@ -447,7 +447,7 @@ open class XAxisRenderer: AxisRendererBase
                     align: .left,
                     attributes: [NSAttributedStringKey.font: limitLine.valueFont, NSAttributedStringKey.foregroundColor: limitLine.valueTextColor])
             }
-            else if limitLine.labelPosition == .rightBottom
+            else if limitLine.positionOfLabel == .rightBottom
             {
                 ChartUtils.drawText(context: context,
                     text: label,
@@ -457,7 +457,7 @@ open class XAxisRenderer: AxisRendererBase
                     align: .left,
                     attributes: [NSAttributedStringKey.font: limitLine.valueFont, NSAttributedStringKey.foregroundColor: limitLine.valueTextColor])
             }
-            else if limitLine.labelPosition == .leftTop
+            else if limitLine.positionOfLabel == .leftTop
             {
                 ChartUtils.drawText(context: context,
                     text: label,

@@ -69,7 +69,7 @@ open class RadarHighlighter: PieRadarHighlighter
             let p = ChartUtils.getPosition(
                 center: chart.centerOffsets,
                 dist: CGFloat(y) * factor * CGFloat(phaseY),
-                angle: sliceangle * CGFloat(index) * CGFloat(phaseX) + chart.rotationAngle)
+                angle: sliceangle * CGFloat(index) * CGFloat(phaseX) + chart.angleOfRotation)
             
             vals.append(Highlight(x: Double(index), y: entry.y, xPx: p.x, yPx: p.y, dataSetIndex: i, axis: dataSet.axisDependency))
         }

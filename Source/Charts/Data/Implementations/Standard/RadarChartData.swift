@@ -15,7 +15,7 @@ import CoreGraphics
 
 open class RadarChartData: ChartData
 {
-    @objc open var highlightColor = NSUIColor(red: 255.0/255.0, green: 187.0/255.0, blue: 115.0/255.0, alpha: 1.0)
+    @objc open var highlightColour = NSUIColor(red: 255.0/255.0, green: 187.0/255.0, blue: 115.0/255.0, alpha: 1.0)
     @objc open var highlightLineWidth = CGFloat(1.0)
     @objc open var highlightLineDashPhase = CGFloat(0.0)
     @objc open var highlightLineDashLengths: [CGFloat]?
@@ -34,13 +34,13 @@ open class RadarChartData: ChartData
         super.init()
     }
     
-    public override init(dataSets: [IChartDataSet]?)
+    public override init(setsOfData: [IChartDataSet]?)
     {
-        super.init(dataSets: dataSets)
+        super.init(setsOfData: setsOfData)
     }
     
     open override func entryForHighlight(_ highlight: Highlight) -> ChartDataEntry?
     {
-        return getDataSetByIndex(highlight.dataSetIndex)?.entryForIndex(Int(highlight.x))
+        return getDataSetByIndex(highlight.indexOfDataSet)?.entryForIndex(Int(highlight.x))
     }
 }

@@ -24,8 +24,8 @@ open class AxisBase: ComponentBase
     /// Custom formatter that is used instead of the auto-formatter if set
     fileprivate var _axisValueFormatter: IAxisValueFormatter?
     
-    @objc open var labelFont = NSUIFont.systemFont(ofSize: 10.0)
-    @objc open var labelTextColor = NSUIColor.black
+    @objc open var fontOfLabel = NSUIFont.systemFont(ofSize: 10.0)
+    @objc open var textColorOfLabel = NSUIColor.black
     
     @objc open var axisLineColor = NSUIColor.gray
     @objc open var axisLineWidth = CGFloat(0.5)
@@ -50,7 +50,7 @@ open class AxisBase: ComponentBase
     /// This is useful especially for grouped BarChart.
     @objc open var centerAxisLabelsEnabled: Bool
     {
-        get { return _centerAxisLabelsEnabled && entryCount > 0 }
+        get { return _centerAxisLabelsEnabled && countOfEntries > 0 }
         set { _centerAxisLabelsEnabled = newValue }
     }
     
@@ -77,7 +77,7 @@ open class AxisBase: ComponentBase
     @objc open var centeredEntries = [Double]()
     
     /// the number of entries the legend contains
-    @objc open var entryCount: Int { return entries.count }
+    @objc open var countOfEntries: Int { return entries.count }
     
     /// the number of label entries the axis should have
     ///
@@ -93,21 +93,21 @@ open class AxisBase: ComponentBase
     /// If using granularity this could be avoided by having fewer axis values visible.
     @objc open var granularityEnabled = false
     
-    fileprivate var _granularity = Double(1.0)
+    fileprivate var _aGranularity = Double(1.0)
     
     /// The minimum interval between axis values.
     /// This can be used to avoid label duplicating when zooming in.
     ///
     /// **default**: 1.0
-    @objc open var granularity: Double
+    @objc open var aGranularity: Double
     {
         get
         {
-            return _granularity
+            return _aGranularity
         }
         set
         {
-            _granularity = newValue
+            _aGranularity = newValue
             
             // set this to `true` if it was disabled, as it makes no sense to set this property with granularity disabled
             granularityEnabled = true

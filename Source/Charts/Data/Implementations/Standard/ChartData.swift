@@ -22,30 +22,30 @@ open class ChartData: NSObject
     @objc internal var _rightAxisMax: Double = -Double.greatestFiniteMagnitude
     @objc internal var _rightAxisMin: Double = Double.greatestFiniteMagnitude
     
-    @objc internal var _dataSets = [IChartDataSet]()
+    @objc internal var _setsOfData = [IChartDataSet]()
     
     public override init()
     {
         super.init()
         
-        _dataSets = [IChartDataSet]()
+        _setsOfData = [IChartDataSet]()
     }
     
-    @objc public init(dataSets: [IChartDataSet]?)
+    @objc public init(setsOfData: [IChartDataSet]?)
     {
         super.init()
         
-        _dataSets = dataSets ?? [IChartDataSet]()
+        _setsOfData = setsOfData ?? [IChartDataSet]()
         
-        self.initialize(dataSets: _dataSets)
+        self.initialize(setsOfData: _setsOfData)
     }
     
-    @objc public convenience init(dataSet: IChartDataSet?)
+    @objc public convenience init(setOfData: IChartDataSet?)
     {
-        self.init(dataSets: dataSet === nil ? nil : [dataSet!])
+        self.init(setsOfData: setOfData === nil ? nil : [setOfData!])
     }
     
-    @objc internal func initialize(dataSets: [IChartDataSet])
+    @objc internal func initialize(setsOfData: [IChartDataSet])
     {
         notifyDataChanged()
     }
@@ -59,7 +59,7 @@ open class ChartData: NSObject
     
     @objc open func calcMinMaxY(fromX: Double, toX: Double)
     {
-        for set in _dataSets
+        for set in _setsOfData
         {
             set.calcMinMaxY(fromX: fromX, toX: toX)
         }
@@ -76,9 +76,9 @@ open class ChartData: NSObject
         _xMax = -Double.greatestFiniteMagnitude
         _xMin = Double.greatestFiniteMagnitude
         
-        for set in _dataSets
+        for set in _setsOfData
         {
-            calcMinMax(dataSet: set)
+            calcMinMax(setOfData: set)
         }
         
         _leftAxisMax = -Double.greatestFiniteMagnitude
@@ -87,50 +87,50 @@ open class ChartData: NSObject
         _rightAxisMin = Double.greatestFiniteMagnitude
         
         // left axis
-        let firstLeft = getFirstLeft(dataSets: dataSets)
+        let firstLeft = getFirstLeft(setsOfData: setsOfData)
         
         if firstLeft !== nil
         {
             _leftAxisMax = firstLeft!.yMax
             _leftAxisMin = firstLeft!.yMin
             
-            for dataSet in _dataSets
+            for setOfData in _setsOfData
             {
-                if dataSet.axisDependency == .left
+                if setOfData.axisDependency == .left
                 {
-                    if dataSet.yMin < _leftAxisMin
+                    if setOfData.yMin < _leftAxisMin
                     {
-                        _leftAxisMin = dataSet.yMin
+                        _leftAxisMin = setOfData.yMin
                     }
                     
-                    if dataSet.yMax > _leftAxisMax
+                    if setOfData.yMax > _leftAxisMax
                     {
-                        _leftAxisMax = dataSet.yMax
+                        _leftAxisMax = setOfData.yMax
                     }
                 }
             }
         }
         
         // right axis
-        let firstRight = getFirstRight(dataSets: dataSets)
+        let firstRight = getFirstRight(setsOfData: setsOfData)
         
         if firstRight !== nil
         {
             _rightAxisMax = firstRight!.yMax
             _rightAxisMin = firstRight!.yMin
             
-            for dataSet in _dataSets
+            for setOfData in _setsOfData
             {
-                if dataSet.axisDependency == .right
+                if setOfData.axisDependency == .right
                 {
-                    if dataSet.yMin < _rightAxisMin
+                    if setOfData.yMin < _rightAxisMin
                     {
-                        _rightAxisMin = dataSet.yMin
+                        _rightAxisMin = setOfData.yMin
                     }
                     
-                    if dataSet.yMax > _rightAxisMax
+                    if setOfData.yMax > _rightAxisMax
                     {
-                        _rightAxisMax = dataSet.yMax
+                        _rightAxisMax = setOfData.yMax
                     }
                 }
             }
@@ -187,7 +187,7 @@ open class ChartData: NSObject
     }
     
     /// Adjusts the minimum and maximum values based on the given DataSet.
-    @objc open func calcMinMax(dataSet d: IChartDataSet)
+    @objc open func calcMinMax(setOfData d: IChartDataSet)
     {
         if _yMax < d.yMax
         {
@@ -238,7 +238,7 @@ open class ChartData: NSObject
     /// - returns: The number of LineDataSets this object contains
     @objc open var dataSetCount: Int
     {
-        return _dataSets.count
+        return _setsOfData.count
     }
     
     /// - returns: The smallest y-value the data object contains.
@@ -329,15 +329,15 @@ open class ChartData: NSObject
     }
     
     /// - returns: All DataSet objects this ChartData object holds.
-    @objc open var dataSets: [IChartDataSet]
+    @objc open var setsOfData: [IChartDataSet]
     {
         get
         {
-            return _dataSets
+            return _setsOfData
         }
         set
         {
-            _dataSets = newValue
+            _setsOfData = newValue
             notifyDataChanged()
         }
     }
@@ -354,13 +354,13 @@ open class ChartData: NSObject
     {
         if ignorecase
         {
-            for i in 0 ..< dataSets.count
+            for i in 0 ..< setsOfData.count
             {
-                if dataSets[i].label == nil
+                if setsOfData[i].label == nil
                 {
                     continue
                 }
-                if (label.caseInsensitiveCompare(dataSets[i].label!) == ComparisonResult.orderedSame)
+                if (label.caseInsensitiveCompare(setsOfData[i].label!) == ComparisonResult.orderedSame)
                 {
                     return i
                 }
@@ -368,9 +368,9 @@ open class ChartData: NSObject
         }
         else
         {
-            for i in 0 ..< dataSets.count
+            for i in 0 ..< setsOfData.count
             {
-                if label == dataSets[i].label
+                if label == setsOfData[i].label
                 {
                     return i
                 }
@@ -385,14 +385,14 @@ open class ChartData: NSObject
     {
         var types = [String]()
         
-        for i in 0 ..< _dataSets.count
+        for i in 0 ..< _setsOfData.count
         {
-            if dataSets[i].label == nil
+            if setsOfData[i].label == nil
             {
                 continue
             }
             
-            types[i] = _dataSets[i].label!
+            types[i] = _setsOfData[i].label!
         }
         
         return types
@@ -404,13 +404,13 @@ open class ChartData: NSObject
     /// - returns: The entry that is highlighted
     @objc open func entryForHighlight(_ highlight: Highlight) -> ChartDataEntry?
     {
-        if highlight.dataSetIndex >= dataSets.count
+        if highlight.indexOfDataSet >= setsOfData.count
         {
             return nil
         }
         else
         {
-            return dataSets[highlight.dataSetIndex].entryForXValue(highlight.x, closestToY: highlight.y)
+            return setsOfData[highlight.indexOfDataSet].entryForXValue(highlight.x, closestToY: highlight.y)
         }
     }
     
@@ -423,47 +423,47 @@ open class ChartData: NSObject
     {
         let index = getDataSetIndexByLabel(label, ignorecase: ignorecase)
         
-        if index < 0 || index >= _dataSets.count
+        if index < 0 || index >= _setsOfData.count
         {
             return nil
         }
         else
         {
-            return _dataSets[index]
+            return _setsOfData[index]
         }
     }
     
     @objc open func getDataSetByIndex(_ index: Int) -> IChartDataSet!
     {
-        if index < 0 || index >= _dataSets.count
+        if index < 0 || index >= _setsOfData.count
         {
             return nil
         }
         
-        return _dataSets[index]
+        return _setsOfData[index]
     }
     
-    @objc open func addDataSet(_ dataSet: IChartDataSet!)
+    @objc open func add(setOfData: IChartDataSet!)
     {
-        calcMinMax(dataSet: dataSet)
+        calcMinMax(setOfData: setOfData)
         
-        _dataSets.append(dataSet)
+        _setsOfData.append(setOfData)
     }
     
     /// Removes the given DataSet from this data object.
     /// Also recalculates all minimum and maximum values.
     ///
     /// - returns: `true` if a DataSet was removed, `false` ifno DataSet could be removed.
-    @objc @discardableResult open func removeDataSet(_ dataSet: IChartDataSet!) -> Bool
+    @objc @discardableResult open func remove( setOfData: IChartDataSet!) -> Bool
     {
-        if dataSet === nil
+        if setOfData === nil
         {
             return false
         }
         
-        for i in 0 ..< _dataSets.count
+        for i in 0 ..< _setsOfData.count
         {
-            if _dataSets[i] === dataSet
+            if _setsOfData[i] === setOfData
             {
                 return removeDataSetByIndex(i)
             }
@@ -478,12 +478,12 @@ open class ChartData: NSObject
     /// - returns: `true` if a DataSet was removed, `false` ifno DataSet could be removed.
     @objc @discardableResult open func removeDataSetByIndex(_ index: Int) -> Bool
     {
-        if index >= _dataSets.count || index < 0
+        if index >= _setsOfData.count || index < 0
         {
             return false
         }
         
-        _dataSets.remove(at: index)
+        _setsOfData.remove(at: index)
         
         calcMinMax()
         
@@ -493,9 +493,9 @@ open class ChartData: NSObject
     /// Adds an Entry to the DataSet at the specified index. Entries are added to the end of the list.
     @objc open func addEntry(_ e: ChartDataEntry, dataSetIndex: Int)
     {
-        if _dataSets.count > dataSetIndex && dataSetIndex >= 0
+        if _setsOfData.count > dataSetIndex && dataSetIndex >= 0
         {
-            let set = _dataSets[dataSetIndex]
+            let set = _setsOfData[dataSetIndex]
             
             if !set.addEntry(e) { return }
             
@@ -511,13 +511,13 @@ open class ChartData: NSObject
     @objc @discardableResult open func removeEntry(_ entry: ChartDataEntry, dataSetIndex: Int) -> Bool
     {
         // entry outofbounds
-        if dataSetIndex >= _dataSets.count
+        if dataSetIndex >= _setsOfData.count
         {
             return false
         }
         
         // remove the entry from the dataset
-        let removed = _dataSets[dataSetIndex].removeEntry(entry)
+        let removed = _setsOfData[dataSetIndex].removeEntry(entry)
         
         if removed
         {
@@ -532,12 +532,12 @@ open class ChartData: NSObject
     /// - returns: `true` if an entry was removed, `false` ifno Entry was found that meets the specified requirements.
     @objc @discardableResult open func removeEntry(xValue: Double, dataSetIndex: Int) -> Bool
     {
-        if dataSetIndex >= _dataSets.count
+        if dataSetIndex >= _setsOfData.count
         {
             return false
         }
         
-        if let entry = _dataSets[dataSetIndex].entryForXValue(xValue, closestToY: Double.nan)
+        if let entry = _setsOfData[dataSetIndex].entryForXValue(xValue, closestToY: Double.nan)
         {
             return removeEntry(entry, dataSetIndex: dataSetIndex)
         }
@@ -553,9 +553,9 @@ open class ChartData: NSObject
             return nil
         }
         
-        for i in 0 ..< _dataSets.count
+        for i in 0 ..< _setsOfData.count
         {
-            let set = _dataSets[i]
+            let set = _setsOfData[i]
             
             if e === set.entryForXValue(e.x, closestToY: e.y)
             {
@@ -569,9 +569,9 @@ open class ChartData: NSObject
     /// - returns: The index of the provided DataSet in the DataSet array of this data object, or -1 if it does not exist.
     @objc open func indexOfDataSet(_ dataSet: IChartDataSet) -> Int
     {
-        for i in 0 ..< _dataSets.count
+        for i in 0 ..< _setsOfData.count
         {
-            if _dataSets[i] === dataSet
+            if _setsOfData[i] === dataSet
             {
                 return i
             }
@@ -581,9 +581,9 @@ open class ChartData: NSObject
     }
     
     /// - returns: The first DataSet from the datasets-array that has it's dependency on the left axis. Returns null if no DataSet with left dependency could be found.
-    @objc open func getFirstLeft(dataSets: [IChartDataSet]) -> IChartDataSet?
+    @objc open func getFirstLeft(setsOfData: [IChartDataSet]) -> IChartDataSet?
     {
-        for dataSet in dataSets
+        for dataSet in setsOfData
         {
             if dataSet.axisDependency == .left
             {
@@ -595,9 +595,9 @@ open class ChartData: NSObject
     }
     
     /// - returns: The first DataSet from the datasets-array that has it's dependency on the right axis. Returns null if no DataSet with right dependency could be found.
-    @objc open func getFirstRight(dataSets: [IChartDataSet]) -> IChartDataSet?
+    @objc open func getFirstRight(setsOfData: [IChartDataSet]) -> IChartDataSet?
     {
-        for dataSet in _dataSets
+        for dataSet in _setsOfData
         {
             if dataSet.axisDependency == .right
             {
@@ -613,16 +613,16 @@ open class ChartData: NSObject
     {
         var clrcnt = 0
         
-        for i in 0 ..< _dataSets.count
+        for i in 0 ..< _setsOfData.count
         {
-            clrcnt += _dataSets[i].colors.count
+            clrcnt += _setsOfData[i].colors.count
         }
         
         var colors = [NSUIColor]()
         
-        for i in 0 ..< _dataSets.count
+        for i in 0 ..< _setsOfData.count
         {
-            let clrs = _dataSets[i].colors
+            let clrs = _setsOfData[i].colors
             
             for clr in clrs
             {
@@ -634,12 +634,12 @@ open class ChartData: NSObject
     }
     
     /// Sets a custom IValueFormatter for all DataSets this data object contains.
-    @objc open func setValueFormatter(_ formatter: IValueFormatter?)
+    @objc open func formatterOfValue(formatter: IValueFormatter?)
     {
         guard let formatter = formatter
             else { return }
         
-        for set in dataSets
+        for set in setsOfData
         {
             set.valueFormatter = formatter
         }
@@ -648,16 +648,16 @@ open class ChartData: NSObject
     /// Sets the color of the value-text (color in which the value-labels are drawn) for all DataSets this data object contains.
     @objc open func setValueTextColor(_ color: NSUIColor!)
     {
-        for set in dataSets
+        for set in setsOfData
         {
             set.valueTextColor = color ?? set.valueTextColor
         }
     }
     
     /// Sets the font for all value-labels for all DataSets this data object contains.
-    @objc open func setValueFont(_ font: NSUIFont!)
+    @objc open func fontOfValue(font: NSUIFont!)
     {
-        for set in dataSets
+        for set in setsOfData
         {
             set.valueFont = font ?? set.valueFont
         }
@@ -666,7 +666,7 @@ open class ChartData: NSObject
     /// Enables / disables drawing values (value-text) for all DataSets this data object contains.
     @objc open func setDrawValues(_ enabled: Bool)
     {
-        for set in dataSets
+        for set in setsOfData
         {
             set.drawValuesEnabled = enabled
         }
@@ -678,7 +678,7 @@ open class ChartData: NSObject
     {
         get
         {
-            for set in dataSets
+            for set in setsOfData
             {
                 if !set.highlightEnabled
                 {
@@ -690,7 +690,7 @@ open class ChartData: NSObject
         }
         set
         {
-            for set in dataSets
+            for set in setsOfData
             {
                 set.highlightEnabled = newValue
             }
@@ -704,7 +704,7 @@ open class ChartData: NSObject
     /// Don't forget to invalidate the chart after this.
     @objc open func clearValues()
     {
-        dataSets.removeAll(keepingCapacity: false)
+        setsOfData.removeAll(keepingCapacity: false)
         notifyDataChanged()
     }
     
@@ -712,7 +712,7 @@ open class ChartData: NSObject
     /// - returns: `true` if so, `false` ifnot.
     @objc open func contains(dataSet: IChartDataSet) -> Bool
     {
-        for set in dataSets
+        for set in setsOfData
         {
             if set === dataSet
             {
@@ -724,13 +724,13 @@ open class ChartData: NSObject
     }
     
     /// - returns: The total entry count across all DataSet objects this data object contains.
-    @objc open var entryCount: Int
+    @objc open var countOfEntries: Int
     {
         var count = 0
         
-        for set in _dataSets
+        for set in _setsOfData
         {
-            count += set.entryCount
+            count += set.countOfEntries
         }
         
         return count
@@ -739,16 +739,16 @@ open class ChartData: NSObject
     /// - returns: The DataSet object with the maximum number of entries or null if there are no DataSets.
     @objc open var maxEntryCountSet: IChartDataSet?
     {
-        if _dataSets.count == 0
+        if _setsOfData.count == 0
         {
             return nil
         }
         
-        var max = _dataSets[0]
+        var max = _setsOfData[0]
         
-        for set in _dataSets
+        for set in _setsOfData
         {
-            if set.entryCount > max.entryCount
+            if set.countOfEntries > max.countOfEntries
             {
                 max = set
             }

@@ -62,15 +62,15 @@ open class HorizontalBarChartView: BarChartView
         if _xAxis.isEnabled
         {
             // offsets for x-labels
-            if _xAxis.labelPosition == .bottom
+            if _xAxis.positionOfLabel == .bottom
             {
                 offsetLeft += xlabelwidth
             }
-            else if _xAxis.labelPosition == .top
+            else if _xAxis.positionOfLabel == .top
             {
                 offsetRight += xlabelwidth
             }
-            else if _xAxis.labelPosition == .bothSided
+            else if _xAxis.positionOfLabel == .bothSided
             {
                 offsetLeft += xlabelwidth
                 offsetRight += xlabelwidth

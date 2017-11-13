@@ -40,7 +40,7 @@ public protocol IChartDataSet
     var xMax: Double { get }
     
     /// - returns: The number of y-values this DataSet represents
-    var entryCount: Int { get }
+    var countOfEntries: Int { get }
     
     /// - returns: The entry object found at the given index (not x-value!)
     /// - throws: out of bounds

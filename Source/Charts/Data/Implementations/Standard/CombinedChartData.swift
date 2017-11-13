@@ -14,7 +14,7 @@ import Foundation
 open class CombinedChartData: BarLineScatterCandleBubbleChartData
 {
     fileprivate var _lineData: LineChartData!
-    fileprivate var _barData: BarChartData!
+    fileprivate var _dataBar: BarChartData!
     fileprivate var _scatterData: ScatterChartData!
     fileprivate var _candleData: CandleChartData!
     fileprivate var _bubbleData: BubbleChartData!
@@ -24,9 +24,9 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         super.init()
     }
     
-    public override init(dataSets: [IChartDataSet]?)
+    public override init(setsOfData: [IChartDataSet]?)
     {
-        super.init(dataSets: dataSets)
+        super.init(setsOfData: setsOfData)
     }
     
     @objc open var lineData: LineChartData!
@@ -42,15 +42,15 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         }
     }
     
-    @objc open var barData: BarChartData!
+    @objc open var dataBar: BarChartData!
     {
         get
         {
-            return _barData
+            return _dataBar
         }
         set
         {
-            _barData = newValue
+            _dataBar = newValue
             notifyDataChanged()
         }
     }
@@ -96,7 +96,7 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
     
     open override func calcMinMax()
     {
-        _dataSets.removeAll()
+        _setsOfData.removeAll()
         
         _yMax = -Double.greatestFiniteMagnitude
         _yMin = Double.greatestFiniteMagnitude
@@ -114,8 +114,8 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         {
             data.calcMinMax()
             
-            let sets = data.dataSets
-            _dataSets.append(contentsOf: sets)
+            let sets = data.setsOfData
+            _setsOfData.append(contentsOf: sets)
             
             if data.yMax > _yMax
             {
@@ -168,9 +168,9 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         {
             data.append(lineData)
         }
-        if barData !== nil
+        if dataBar !== nil
         {
-            data.append(barData)
+            data.append(dataBar)
         }
         if scatterData !== nil
         {
@@ -198,7 +198,7 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         return allData.index(of: data)
     }
     
-    open override func removeDataSet(_ dataSet: IChartDataSet!) -> Bool
+    open override func remove(setOfData: IChartDataSet!) -> Bool
     {
         let datas = allData
         
@@ -206,7 +206,7 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         
         for data in datas
         {
-            success = data.removeDataSet(dataSet)
+            success = data.remove(setOfData: setOfData)
             
             if success
             {
@@ -241,9 +241,9 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         {
             _lineData.notifyDataChanged()
         }
-        if _barData !== nil
+        if _dataBar !== nil
         {
-            _barData.notifyDataChanged()
+            _dataBar.notifyDataChanged()
         }
         if _scatterData !== nil
         {
@@ -274,13 +274,13 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         
         let data = dataByIndex(highlight.dataIndex)
         
-        if highlight.dataSetIndex >= data.dataSetCount
+        if highlight.indexOfDataSet >= data.dataSetCount
         {
             return nil
         }
         
         // The value of the highlighted entry could be NaN - if we are not interested in highlighting a specific value.
-        let entries = data.getDataSetByIndex(highlight.dataSetIndex).entriesForXValue(highlight.x)
+        let entries = data.getDataSetByIndex(highlight.indexOfDataSet).entriesForXValue(highlight.x)
         for e in entries
         {
             if e.y == highlight.y || highlight.y.isNaN
@@ -304,11 +304,11 @@ open class CombinedChartData: BarLineScatterCandleBubbleChartData
         
         let data = dataByIndex(highlight.dataIndex)
         
-        if highlight.dataSetIndex >= data.dataSetCount
+        if highlight.indexOfDataSet >= data.dataSetCount
         {
             return nil
         }
         
-        return data.dataSets[highlight.dataSetIndex]
+        return data.setsOfData[highlight.indexOfDataSet]
     }
 }

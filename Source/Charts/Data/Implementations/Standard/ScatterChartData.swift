@@ -19,9 +19,9 @@ open class ScatterChartData: BarLineScatterCandleBubbleChartData
         super.init()
     }
     
-    public override init(dataSets: [IChartDataSet]?)
+    public override init(setsOfData: [IChartDataSet]?)
     {
-        super.init(dataSets: dataSets)
+        super.init(setsOfData: setsOfData)
     }
     
     /// - returns: The maximum shape-size across all DataSets.
@@ -29,7 +29,7 @@ open class ScatterChartData: BarLineScatterCandleBubbleChartData
     {
         var max = CGFloat(0.0)
         
-        for set in _dataSets
+        for set in _setsOfData
         {
             let scatterDataSet = set as? IScatterChartDataSet
             

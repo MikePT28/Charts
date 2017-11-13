@@ -73,9 +73,9 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
         fatalError("xMax is not implemented in ChartBaseDataSet")
     }
     
-    open var entryCount: Int
+    open var countOfEntries: Int
     {
-        fatalError("entryCount is not implemented in ChartBaseDataSet")
+        fatalError("countOfEntries is not implemented in ChartBaseDataSet")
     }
         
     open func entryForIndex(_ i: Int) -> ChartDataEntry?
@@ -151,7 +151,7 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
     
     @discardableResult open func removeFirst() -> Bool
     {
-        if entryCount > 0
+        if countOfEntries > 0
         {
             if let entry = entryForIndex(0)
             {
@@ -163,9 +163,9 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
     
     @discardableResult open func removeLast() -> Bool
     {
-        if entryCount > 0
+        if countOfEntries > 0
         {
-            if let entry = entryForIndex(entryCount - 1)
+            if let entry = entryForIndex(countOfEntries - 1)
             {
                 return removeEntry(entry)
             }
@@ -394,14 +394,14 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
     
     open override var description: String
     {
-        return String(format: "%@, label: %@, %i entries", arguments: [NSStringFromClass(type(of: self)), self.label ?? "", self.entryCount])
+        return String(format: "%@, label: %@, %i entries", arguments: [NSStringFromClass(type(of: self)), self.label ?? "", self.countOfEntries])
     }
     
     open override var debugDescription: String
     {
         var desc = description + ":"
         
-        for i in 0 ..< self.entryCount
+        for i in 0 ..< self.countOfEntries
         {
             desc += "\n" + (self.entryForIndex(i)?.description ?? "")
         }

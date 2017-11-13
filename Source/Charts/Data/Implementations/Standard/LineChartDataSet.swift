@@ -36,9 +36,9 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
         initialize()
     }
     
-    public override init(values: [ChartDataEntry]?, label: String?)
+    public override init(entries: [ChartDataEntry]?, label: String?)
     {
-        super.init(values: values, label: label)
+        super.init(entries: entries, label: label)
         initialize()
     }
     
@@ -109,7 +109,7 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
     open var isDrawSteppedEnabled: Bool { return drawSteppedEnabled }
     
     /// The radius of the drawn circles.
-    open var circleRadius = CGFloat(8.0)
+    open var radiusOfCircle = CGFloat(8.0)
     
     /// The hole radius of the drawn circles
     open var circleHoleRadius = CGFloat(4.0)
@@ -204,7 +204,7 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
     {
         let copy = super.copyWithZone(zone) as! LineChartDataSet
         copy.circleColors = circleColors
-        copy.circleRadius = circleRadius
+        copy.radiusOfCircle = radiusOfCircle
         copy.cubicIntensity = cubicIntensity
         copy.lineDashPhase = lineDashPhase
         copy.lineDashLengths = lineDashLengths

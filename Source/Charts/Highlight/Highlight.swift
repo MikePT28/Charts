@@ -31,7 +31,7 @@ open class Highlight: NSObject
     @objc open var dataIndex = Int(-1)
     
     /// the index of the dataset the highlighted value is in
-    fileprivate var _dataSetIndex = Int(0)
+    fileprivate var _indexOfDataSet = Int(0)
     
     /// index which value of a stacked bar entry is highlighted
     /// 
@@ -64,7 +64,7 @@ open class Highlight: NSObject
         x: Double, y: Double,
         xPx: CGFloat, yPx: CGFloat,
         dataIndex: Int,
-        dataSetIndex: Int,
+        indexOfDataSet: Int,
         stackIndex: Int,
         axis: YAxis.AxisDependency)
     {
@@ -75,7 +75,7 @@ open class Highlight: NSObject
         _xPx = xPx
         _yPx = yPx
         self.dataIndex = dataIndex
-        _dataSetIndex = dataSetIndex
+        _indexOfDataSet = indexOfDataSet
         _stackIndex = stackIndex
         _axis = axis
     }
@@ -96,7 +96,7 @@ open class Highlight: NSObject
     {
         self.init(x: x, y: y, xPx: xPx, yPx: yPx,
                   dataIndex: 0,
-                  dataSetIndex: dataSetIndex,
+                  indexOfDataSet: dataSetIndex,
                   stackIndex: stackIndex,
                   axis: axis)
     }
@@ -121,7 +121,7 @@ open class Highlight: NSObject
         _y = y
         _xPx = xPx
         _yPx = yPx
-        _dataSetIndex = dataSetIndex
+        _indexOfDataSet = dataSetIndex
         _axis = axis
     }
     
@@ -132,7 +132,7 @@ open class Highlight: NSObject
     {
         _x = x
         _y = y
-        _dataSetIndex = dataSetIndex
+        _indexOfDataSet = dataSetIndex
     }
     
     /// - parameter x: the x-value of the highlighted value
@@ -148,7 +148,7 @@ open class Highlight: NSObject
     @objc open var y: Double { return _y }
     @objc open var xPx: CGFloat { return _xPx }
     @objc open var yPx: CGFloat { return _yPx }
-    @objc open var dataSetIndex: Int { return _dataSetIndex }
+    @objc open var indexOfDataSet: Int { return _indexOfDataSet }
     @objc open var stackIndex: Int { return _stackIndex }
     @objc open var axis: YAxis.AxisDependency { return _axis }
     
@@ -172,7 +172,7 @@ open class Highlight: NSObject
     
     open override var description: String
     {
-        return "Highlight, x: \(_x), y: \(_y), dataIndex (combined charts): \(dataIndex), dataSetIndex: \(_dataSetIndex), stackIndex (only stacked barentry): \(_stackIndex)"
+        return "Highlight, x: \(_x), y: \(_y), dataIndex (combined charts): \(dataIndex), dataSetIndex: \(_indexOfDataSet), stackIndex (only stacked barentry): \(_stackIndex)"
     }
     
     open override func isEqual(_ object: Any?) -> Bool
@@ -202,7 +202,7 @@ open class Highlight: NSObject
             return false
         }
         
-        if (object! as AnyObject).dataSetIndex != _dataSetIndex
+        if (object! as AnyObject).indexOfDataSet != _indexOfDataSet
         {
             return false
         }
@@ -243,7 +243,7 @@ func ==(lhs: Highlight, rhs: Highlight) -> Bool
         return false
     }
     
-    if lhs._dataSetIndex != rhs._dataSetIndex
+    if lhs._indexOfDataSet != rhs._indexOfDataSet
     {
         return false
     }

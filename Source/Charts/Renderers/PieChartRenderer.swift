@@ -36,9 +36,9 @@ open class PieChartRenderer: DataRenderer
         
         if pieData != nil
         {
-            for set in pieData!.dataSets as! [IPieChartDataSet]
+            for set in pieData!.setsOfData as! [IPieChartDataSet]
             {
-                if set.isVisible && set.entryCount > 0
+                if set.isVisible && set.countOfEntries > 0
                 {
                     drawDataSet(context: context, dataSet: set)
                 }
@@ -114,12 +114,12 @@ open class PieChartRenderer: DataRenderer
             else {return }
         
         var angle: CGFloat = 0.0
-        let rotationAngle = chart.rotationAngle
+        let rotationAngle = chart.angleOfRotation
         
         let phaseX = animator.phaseX
         let phaseY = animator.phaseY
         
-        let entryCount = dataSet.entryCount
+        let countOfEntries = dataSet.countOfEntries
         var drawAngles = chart.drawAngles
         let center = chart.centerCircleBox
         let radius = chart.radius
@@ -127,7 +127,7 @@ open class PieChartRenderer: DataRenderer
         let userInnerRadius = drawInnerArc ? radius * chart.holeRadiusPercent : 0.0
         
         var visibleAngleCount = 0
-        for j in 0 ..< entryCount
+        for j in 0 ..< countOfEntries
         {
             guard let e = dataSet.entryForIndex(j) else { continue }
             if ((abs(e.y) > Double.ulpOfOne))
@@ -140,7 +140,7 @@ open class PieChartRenderer: DataRenderer
 
         context.saveGState()
         
-        for j in 0 ..< entryCount
+        for j in 0 ..< countOfEntries
         {
             let sliceAngle = drawAngles[j]
             var innerRadius = userInnerRadius
@@ -270,7 +270,7 @@ open class PieChartRenderer: DataRenderer
         
         // get whole the radius
         let radius = chart.radius
-        let rotationAngle = chart.rotationAngle
+        let rotationAngle = chart.angleOfRotation
         var drawAngles = chart.drawAngles
         var absoluteAngles = chart.absoluteAngles
         
@@ -286,7 +286,7 @@ open class PieChartRenderer: DataRenderer
         
         let labelRadius = radius - labelRadiusOffset
         
-        var dataSets = data.dataSets
+        var setsOfData = data.setsOfData
         
         let yValueSum = (data as! PieChartData).yValueSum
         
@@ -301,31 +301,31 @@ open class PieChartRenderer: DataRenderer
         context.saveGState()
         defer { context.restoreGState() }
         
-        for i in 0 ..< dataSets.count
+        for i in 0 ..< setsOfData.count
         {
-            guard let dataSet = dataSets[i] as? IPieChartDataSet else { continue }
+            guard let setOfData = setsOfData[i] as? IPieChartDataSet else { continue }
             
-            let drawValues = dataSet.isDrawValuesEnabled
+            let drawValues = setOfData.isDrawValuesEnabled
             
-            if !drawValues && !drawEntryLabels && !dataSet.isDrawIconsEnabled
+            if !drawValues && !drawEntryLabels && !setOfData.isDrawIconsEnabled
             {
                 continue
             }
             
-            let iconsOffset = dataSet.iconsOffset
+            let iconsOffset = setOfData.iconsOffset
             
-            let xValuePosition = dataSet.xValuePosition
-            let yValuePosition = dataSet.yValuePosition
+            let xValuePosition = setOfData.xValuePosition
+            let yValuePosition = setOfData.yValuePosition
             
-            let valueFont = dataSet.valueFont
-            let entryLabelFont = dataSet.entryLabelFont
+            let valueFont = setOfData.valueFont
+            let entryLabelFont = setOfData.entryLabelFont
             let lineHeight = valueFont.lineHeight
             
-            guard let formatter = dataSet.valueFormatter else { continue }
+            guard let formatter = setOfData.valueFormatter else { continue }
             
-            for j in 0 ..< dataSet.entryCount
+            for j in 0 ..< setOfData.countOfEntries
             {
-                guard let e = dataSet.entryForIndex(j) else { continue }
+                guard let e = setOfData.entryForIndex(j) else { continue }
                 let pe = e as? PieChartDataEntry
                 
                 if xIndex == 0
@@ -338,7 +338,7 @@ open class PieChartRenderer: DataRenderer
                 }
                 
                 let sliceAngle = drawAngles[xIndex]
-                let sliceSpace = getSliceSpace(dataSet: dataSet)
+                let sliceSpace = getSliceSpace(dataSet: setOfData)
                 let sliceSpaceMiddleAngle = sliceSpace / (ChartUtils.Math.FDEG2RAD * labelRadius)
                 
                 // offset needed to center the drawn text in the slice
@@ -363,14 +363,14 @@ open class PieChartRenderer: DataRenderer
                 let drawXInside = drawEntryLabels && xValuePosition == .insideSlice
                 let drawYInside = drawValues && yValuePosition == .insideSlice
                 
-                let valueTextColor = dataSet.valueTextColorAt(j)
-                let entryLabelColor = dataSet.entryLabelColor
+                let valueTextColor = setOfData.valueTextColorAt(j)
+                let entryLabelColor = setOfData.entryLabelColor
                 
                 if drawXOutside || drawYOutside
                 {
-                    let valueLineLength1 = dataSet.valueLinePart1Length
-                    let valueLineLength2 = dataSet.valueLinePart2Length
-                    let valueLinePart1OffsetPercentage = dataSet.valueLinePart1OffsetPercentage
+                    let valueLineLength1 = setOfData.valueLinePart1Length
+                    let valueLineLength2 = setOfData.valueLinePart2Length
+                    let valueLinePart1OffsetPercentage = setOfData.valueLinePart1OffsetPercentage
                     
                     var pt2: CGPoint
                     var labelPoint: CGPoint
@@ -387,7 +387,7 @@ open class PieChartRenderer: DataRenderer
                         line1Radius = radius * valueLinePart1OffsetPercentage
                     }
                     
-                    let polyline2Length = dataSet.valueLineVariableLength
+                    let polyline2Length = setOfData.valueLineVariableLength
                         ? labelRadius * valueLineLength2 * abs(sin(transformedAngle * ChartUtils.Math.FDEG2RAD))
                         : labelRadius * valueLineLength2
                     
@@ -412,10 +412,10 @@ open class PieChartRenderer: DataRenderer
                         labelPoint = CGPoint(x: pt2.x + 5, y: pt2.y - lineHeight)
                     }
                     
-                    if dataSet.valueLineColor != nil
+                    if setOfData.valueLineColor != nil
                     {
-                        context.setStrokeColor(dataSet.valueLineColor!.cgColor)
-                        context.setLineWidth(dataSet.valueLineWidth)
+                        context.setStrokeColor(setOfData.valueLineColor!.cgColor)
+                        context.setLineWidth(setOfData.valueLineWidth)
                         
                         context.move(to: CGPoint(x: pt0.x, y: pt0.y))
                         context.addLine(to: CGPoint(x: pt1.x, y: pt1.y))
@@ -434,7 +434,7 @@ open class PieChartRenderer: DataRenderer
                             attributes: [NSAttributedStringKey.font: valueFont, NSAttributedStringKey.foregroundColor: valueTextColor]
                         )
                         
-                        if j < data.entryCount && pe?.label != nil
+                        if j < data.countOfEntries && pe?.label != nil
                         {
                             ChartUtils.drawText(
                                 context: context,
@@ -449,7 +449,7 @@ open class PieChartRenderer: DataRenderer
                     }
                     else if drawXOutside
                     {
-                        if j < data.entryCount && pe?.label != nil
+                        if j < data.countOfEntries && pe?.label != nil
                         {
                             ChartUtils.drawText(
                                 context: context,
@@ -490,7 +490,7 @@ open class PieChartRenderer: DataRenderer
                             attributes: [NSAttributedStringKey.font: valueFont, NSAttributedStringKey.foregroundColor: valueTextColor]
                         )
                         
-                        if j < data.entryCount && pe?.label != nil
+                        if j < data.countOfEntries && pe?.label != nil
                         {
                             ChartUtils.drawText(
                                 context: context,
@@ -505,7 +505,7 @@ open class PieChartRenderer: DataRenderer
                     }
                     else if drawXInside
                     {
-                        if j < data.entryCount && pe?.label != nil
+                        if j < data.countOfEntries && pe?.label != nil
                         {
                             ChartUtils.drawText(
                                 context: context,
@@ -530,7 +530,7 @@ open class PieChartRenderer: DataRenderer
                     }
                 }
                 
-                if let icon = e.icon, dataSet.isDrawIconsEnabled
+                if let icon = e.icon, setOfData.isDrawIconsEnabled
                 {
                     // calculate the icon's position
                     
@@ -678,7 +678,7 @@ open class PieChartRenderer: DataRenderer
         let phaseY = animator.phaseY
         
         var angle: CGFloat = 0.0
-        let rotationAngle = chart.rotationAngle
+        let rotationAngle = chart.angleOfRotation
         
         var drawAngles = chart.drawAngles
         var absoluteAngles = chart.absoluteAngles
@@ -696,16 +696,16 @@ open class PieChartRenderer: DataRenderer
                 continue
             }
             
-            guard let set = data.getDataSetByIndex(indices[i].dataSetIndex) as? IPieChartDataSet else { continue }
+            guard let set = data.getDataSetByIndex(indices[i].indexOfDataSet) as? IPieChartDataSet else { continue }
             
             if !set.isHighlightEnabled
             {
                 continue
             }
 
-            let entryCount = set.entryCount
+            let countOfEntries = set.countOfEntries
             var visibleAngleCount = 0
-            for j in 0 ..< entryCount
+            for j in 0 ..< countOfEntries
             {
                 guard let e = set.entryForIndex(j) else { continue }
                 if ((abs(e.y) > Double.ulpOfOne))

@@ -30,7 +30,7 @@ open class ChartLimitLine: ComponentBase
     @objc open var limit = Double(0.0)
     
     fileprivate var _lineWidth = CGFloat(2.0)
-    @objc open var lineColor = NSUIColor(red: 237.0/255.0, green: 91.0/255.0, blue: 91.0/255.0, alpha: 1.0)
+    @objc open var colorOfLine = NSUIColor(red: 237.0/255.0, green: 91.0/255.0, blue: 91.0/255.0, alpha: 1.0)
     @objc open var lineDashPhase = CGFloat(0.0)
     @objc open var lineDashLengths: [CGFloat]?
     
@@ -39,23 +39,23 @@ open class ChartLimitLine: ComponentBase
     
     @objc open var drawLabelEnabled = true
     @objc open var label = ""
-    @objc open var labelPosition = LabelPosition.rightTop
+    @objc open var positionOfLabel = LabelPosition.rightTop
     
     public override init()
     {
         super.init()
     }
     
-    @objc public init(limit: Double)
+    @objc public init(endPoint: Double)
     {
         super.init()
-        self.limit = limit
+        self.limit = endPoint
     }
     
-    @objc public init(limit: Double, label: String)
+    @objc public init(endPoint: Double, label: String)
     {
         super.init()
-        self.limit = limit
+        self.limit = endPoint
         self.label = label
     }
     

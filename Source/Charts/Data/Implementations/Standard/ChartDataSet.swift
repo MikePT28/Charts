@@ -38,18 +38,18 @@ open class ChartDataSet: ChartBaseDataSet
         _values = [ChartDataEntry]()
     }
     
-    @objc public init(values: [ChartDataEntry]?, label: String?)
+    @objc public init(entries: [ChartDataEntry]?, label: String?)
     {
         super.init(label: label)
         
-        _values = values == nil ? [ChartDataEntry]() : values
+        _values = entries == nil ? [ChartDataEntry]() : entries
         
         self.calcMinMax()
     }
     
-    @objc public convenience init(values: [ChartDataEntry]?)
+    @objc public convenience init(entries: [ChartDataEntry]?)
     {
-        self.init(values: values, label: "DataSet")
+        self.init(entries: entries, label: "DataSet")
     }
     
     // MARK: - Data functions and accessors
@@ -177,7 +177,7 @@ open class ChartDataSet: ChartBaseDataSet
     open override var xMax: Double { return _xMax }
     
     /// - returns: The number of y-values this DataSet represents
-    open override var entryCount: Int { return _values?.count ?? 0 }
+    open override var countOfEntries: Int { return _values?.count ?? 0 }
     
     /// - returns: The entry object found at the given index (not x-value!)
     /// - throws: out of bounds

@@ -50,7 +50,7 @@ open class LineChartRenderer: LineRadarRenderer
     
     @objc open func drawDataSet(context: CGContext, dataSet: ILineChartDataSet)
     {
-        if dataSet.entryCount < 1
+        if dataSet.countOfEntries < 1
         {
             return
         }
@@ -139,7 +139,7 @@ open class LineChartRenderer: LineRadarRenderer
                 prev = cur
                 cur = nextIndex == j ? next : dataSet.entryForIndex(j)
                 
-                nextIndex = j + 1 < dataSet.entryCount ? j + 1 : j
+                nextIndex = j + 1 < dataSet.countOfEntries ? j + 1 : j
                 next = dataSet.entryForIndex(nextIndex)
                 
                 if next == nil { break }
@@ -302,7 +302,7 @@ open class LineChartRenderer: LineRadarRenderer
         
         let valueToPixelMatrix = trans.valueToPixelMatrix
         
-        let entryCount = dataSet.entryCount
+        let entryCount = dataSet.countOfEntries
         let isDrawSteppedEnabled = dataSet.mode == .stepped
         let pointsPerEntryPair = isDrawSteppedEnabled ? 4 : 2
         
@@ -516,15 +516,15 @@ open class LineChartRenderer: LineRadarRenderer
         
         if isDrawingValuesAllowed(dataProvider: dataProvider)
         {
-            var dataSets = lineData.dataSets
+            var setsOfData = lineData.setsOfData
             
             let phaseY = animator.phaseY
             
             var pt = CGPoint()
             
-            for i in 0 ..< dataSets.count
+            for i in 0 ..< setsOfData.count
             {
-                guard let dataSet = dataSets[i] as? ILineChartDataSet else { continue }
+                guard let dataSet = setsOfData[i] as? ILineChartDataSet else { continue }
                 
                 if !shouldDrawValues(forDataSet: dataSet)
                 {
@@ -541,7 +541,7 @@ open class LineChartRenderer: LineRadarRenderer
                 let iconsOffset = dataSet.iconsOffset
                 
                 // make sure the values do not interfear with the circles
-                var valOffset = Int(dataSet.circleRadius * 1.75)
+                var valOffset = Int(dataSet.radiusOfCircle * 1.75)
                 
                 if !dataSet.isDrawCirclesEnabled
                 {
@@ -612,18 +612,18 @@ open class LineChartRenderer: LineRadarRenderer
         
         let phaseY = animator.phaseY
         
-        let dataSets = lineData.dataSets
+        let setsOfData = lineData.setsOfData
         
         var pt = CGPoint()
         var rect = CGRect()
         
         context.saveGState()
         
-        for i in 0 ..< dataSets.count
+        for i in 0 ..< setsOfData.count
         {
             guard let dataSet = lineData.getDataSetByIndex(i) as? ILineChartDataSet else { continue }
             
-            if !dataSet.isVisible || !dataSet.isDrawCirclesEnabled || dataSet.entryCount == 0
+            if !dataSet.isVisible || !dataSet.isDrawCirclesEnabled || dataSet.countOfEntries == 0
             {
                 continue
             }
@@ -633,7 +633,7 @@ open class LineChartRenderer: LineRadarRenderer
             
             _xBounds.set(chart: dataProvider, dataSet: dataSet, animator: animator)
             
-            let circleRadius = dataSet.circleRadius
+            let circleRadius = dataSet.radiusOfCircle
             let circleDiameter = circleRadius * 2.0
             let circleHoleRadius = dataSet.circleHoleRadius
             let circleHoleDiameter = circleHoleRadius * 2.0
@@ -724,7 +724,7 @@ open class LineChartRenderer: LineRadarRenderer
         
         for high in indices
         {
-            guard let set = lineData.getDataSetByIndex(high.dataSetIndex) as? ILineChartDataSet
+            guard let set = lineData.getDataSetByIndex(high.indexOfDataSet) as? ILineChartDataSet
                 , set.isHighlightEnabled
                 else { continue }
             
@@ -735,7 +735,7 @@ open class LineChartRenderer: LineRadarRenderer
                 continue
             }
         
-            context.setStrokeColor(set.highlightColor.cgColor)
+            context.setStrokeColor(set.highlightColour.cgColor)
             context.setLineWidth(set.highlightLineWidth)
             if set.highlightLineDashLengths != nil
             {

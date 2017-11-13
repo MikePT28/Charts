@@ -35,7 +35,7 @@ open class BubbleChartRenderer: BarLineScatterCandleBubbleRenderer
             let bubbleData = dataProvider.bubbleData
             else { return }
         
-        for set in bubbleData.dataSets as! [IBubbleChartDataSet]
+        for set in bubbleData.setsOfData as! [IBubbleChartDataSet]
         {
             if set.isVisible
             {
@@ -147,16 +147,16 @@ open class BubbleChartRenderer: BarLineScatterCandleBubbleRenderer
         // if values are drawn
         if isDrawingValuesAllowed(dataProvider: dataProvider)
         {
-            guard let dataSets = bubbleData.dataSets as? [IBubbleChartDataSet] else { return }
+            guard let setsOfData = bubbleData.setsOfData as? [IBubbleChartDataSet] else { return }
             
             let phaseX = max(0.0, min(1.0, animator.phaseX))
             let phaseY = animator.phaseY
             
             var pt = CGPoint()
             
-            for i in 0..<dataSets.count
+            for i in 0..<setsOfData.count
             {
-                let dataSet = dataSets[i]
+                let dataSet = setsOfData[i]
                 
                 if !shouldDrawValues(forDataSet: dataSet)
                 {
@@ -251,7 +251,7 @@ open class BubbleChartRenderer: BarLineScatterCandleBubbleRenderer
         for high in indices
         {
             guard
-                let dataSet = bubbleData.getDataSetByIndex(high.dataSetIndex) as? IBubbleChartDataSet,
+                let dataSet = bubbleData.getDataSetByIndex(high.indexOfDataSet) as? IBubbleChartDataSet,
                 dataSet.isHighlightEnabled
                 else { continue }
                         

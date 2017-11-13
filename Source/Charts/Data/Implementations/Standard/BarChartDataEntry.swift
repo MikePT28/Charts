@@ -31,9 +31,9 @@ open class BarChartDataEntry: ChartDataEntry
     }
     
     /// Constructor for normal bars (not stacked).
-    public override init(x: Double, y: Double)
+    public override init(pointX: Double, pointY: Double)
     {
-        super.init(x: x, y: y)
+        super.init(pointX: pointX, pointY: pointY)
     }
     
     /// Constructor for normal bars (not stacked).
@@ -57,7 +57,7 @@ open class BarChartDataEntry: ChartDataEntry
     /// Constructor for stacked bar entries.
     @objc public init(x: Double, yValues: [Double])
     {
-        super.init(x: x, y: BarChartDataEntry.calcSum(values: yValues))
+        super.init(pointX: x, pointY: BarChartDataEntry.calcSum(values: yValues))
         self._yVals = yValues
         calcPosNegSum()
         calcRanges()

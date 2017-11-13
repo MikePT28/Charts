@@ -77,7 +77,7 @@ open class BarChartView: BarLineChartViewBase, BarChartDataProvider
             x: h.x, y: h.y,
             xPx: h.xPx, yPx: h.yPx,
             dataIndex: h.dataIndex,
-            dataSetIndex: h.dataSetIndex,
+            indexOfDataSet: h.indexOfDataSet,
             stackIndex: -1,
             axis: h.axis)
     }
@@ -116,7 +116,7 @@ open class BarChartView: BarLineChartViewBase, BarChartDataProvider
     /// - parameter barSpace: the space between individual bars in values (not pixels) e.g. 0.1f for bar width 1f
     @objc open func groupBars(fromX: Double, groupSpace: Double, barSpace: Double)
     {
-        guard let barData = self.barData
+        guard let barData = self.dataBar
             else
         {
             Swift.print("You need to set data for the chart before grouping bars.", terminator: "\n")
@@ -173,7 +173,7 @@ open class BarChartView: BarLineChartViewBase, BarChartDataProvider
     
     // MARK: - BarChartDataProvider
     
-    open var barData: BarChartData? { return _data as? BarChartData }
+    open var dataBar: BarChartData? { return _data as? BarChartData }
     
     /// - returns: `true` if drawing values above bars is enabled, `false` ifnot
     open var isDrawValueAboveBarEnabled: Bool { return drawValueAboveBarEnabled }

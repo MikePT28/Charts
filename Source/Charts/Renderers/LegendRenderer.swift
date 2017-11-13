@@ -20,34 +20,34 @@ import CoreGraphics
 open class LegendRenderer: Renderer
 {
     /// the legend object this renderer renders
-    @objc open var legend: Legend?
+    @objc open var aLegend: Legend?
 
     @objc public init(viewPortHandler: ViewPortHandler?, legend: Legend?)
     {
         super.init(viewPortHandler: viewPortHandler)
         
-        self.legend = legend
+        self.aLegend = legend
     }
 
-    /// Prepares the legend and calculates all needed forms, labels and colors.
+    /// Prepares the aLegend and calculates all needed forms, labels and colors.
     @objc open func computeLegend(data: ChartData)
     {
         guard
-            let legend = legend,
+            let aLegend = aLegend,
             let viewPortHandler = self.viewPortHandler
             else { return }
         
-        if !legend.isLegendCustom
+        if !aLegend.isLegendCustom
         {
             var entries: [LegendEntry] = []
             
-            // loop for building up the colors and labels used in the legend
+            // loop for building up the colors and labels used in the aLegend
             for i in 0..<data.dataSetCount
             {
                 guard let dataSet = data.getDataSetByIndex(i) else { continue }
                 
                 var clrs: [NSUIColor] = dataSet.colors
-                let entryCount = dataSet.entryCount
+                let countOfEntries = dataSet.countOfEntries
                 
                 // if we have a barchart with stacked bars
                 if dataSet is IBarChartDataSet &&
@@ -73,7 +73,7 @@ open class LegendRenderer: Renderer
                     
                     if dataSet.label != nil
                     {
-                        // add the legend description label
+                        // add the aLegend description label
                         
                         entries.append(
                             LegendEntry(
@@ -92,7 +92,7 @@ open class LegendRenderer: Renderer
                 {
                     let pds = dataSet as! IPieChartDataSet
                     
-                    for j in 0..<min(clrs.count, entryCount)
+                    for j in 0..<min(clrs.count, countOfEntries)
                     {
                         entries.append(
                             LegendEntry(
@@ -109,7 +109,7 @@ open class LegendRenderer: Renderer
                     
                     if dataSet.label != nil
                     {
-                        // add the legend description label
+                        // add the aLegend description label
                         
                         entries.append(
                             LegendEntry(
@@ -156,12 +156,12 @@ open class LegendRenderer: Renderer
                 else
                 { // all others
                     
-                    for j in 0..<min(clrs.count, entryCount)
+                    for j in 0..<min(clrs.count, countOfEntries)
                     {
                         let label: String?
                         
                         // if multiple colors are set for a DataSet, group them
-                        if j < clrs.count - 1 && j < entryCount - 1
+                        if j < clrs.count - 1 && j < countOfEntries - 1
                         {
                             label = nil
                         }
@@ -185,47 +185,47 @@ open class LegendRenderer: Renderer
                 }
             }
             
-            legend.entries = entries + legend.extraEntries
+            aLegend.entries = entries + aLegend.extraEntries
         }
         
-        // calculate all dimensions of the legend
-        legend.calculateDimensions(labelFont: legend.font, viewPortHandler: viewPortHandler)
+        // calculate all dimensions of the aLegend
+        aLegend.calculateDimensions(labelFont: aLegend.font, viewPortHandler: viewPortHandler)
     }
     
     @objc open func renderLegend(context: CGContext)
     {
         guard
-            let legend = legend,
+            let aLegend = aLegend,
             let viewPortHandler = self.viewPortHandler
             else { return }
         
-        if !legend.enabled
+        if !aLegend.enabled
         {
             return
         }
         
-        let labelFont = legend.font
-        let labelTextColor = legend.textColor
+        let labelFont = aLegend.font
+        let labelTextColor = aLegend.textColor
         let labelLineHeight = labelFont.lineHeight
         let formYOffset = labelLineHeight / 2.0
 
-        var entries = legend.entries
+        var entries = aLegend.entries
         
-        let defaultFormSize = legend.formSize
-        let formToTextSpace = legend.formToTextSpace
-        let xEntrySpace = legend.xEntrySpace
-        let yEntrySpace = legend.yEntrySpace
+        let defaultFormSize = aLegend.formSize
+        let formToTextSpace = aLegend.formToTextSpace
+        let xEntrySpace = aLegend.xEntrySpace
+        let yEntrySpace = aLegend.yEntrySpace
         
-        let orientation = legend.orientation
-        let horizontalAlignment = legend.horizontalAlignment
-        let verticalAlignment = legend.verticalAlignment
-        let direction = legend.direction
+        let orientation = aLegend.orientation
+        let horizontalAlignment = aLegend.horizontalAlignment
+        let verticalAlignment = aLegend.verticalAlignment
+        let direction = aLegend.direction
 
         // space between the entries
-        let stackSpace = legend.stackSpace
+        let stackSpace = aLegend.stackSpace
 
-        let yoffset = legend.yOffset
-        let xoffset = legend.xOffset
+        let yoffset = aLegend.yOffset
+        let xoffset = aLegend.xOffset
         var originPosX: CGFloat = 0.0
         
         switch horizontalAlignment
@@ -243,7 +243,7 @@ open class LegendRenderer: Renderer
             
             if direction == .rightToLeft
             {
-                originPosX += legend.neededWidth
+                originPosX += aLegend.neededWidth
             }
             
         case .right:
@@ -259,7 +259,7 @@ open class LegendRenderer: Renderer
             
             if direction == .leftToRight
             {
-                originPosX -= legend.neededWidth
+                originPosX -= aLegend.neededWidth
             }
             
         case .center:
@@ -284,11 +284,11 @@ open class LegendRenderer: Renderer
             {
                 if direction == .leftToRight
                 {
-                    originPosX -= legend.neededWidth / 2.0 - xoffset
+                    originPosX -= aLegend.neededWidth / 2.0 - xoffset
                 }
                 else
                 {
-                    originPosX += legend.neededWidth / 2.0 - xoffset
+                    originPosX += aLegend.neededWidth / 2.0 - xoffset
                 }
             }
         }
@@ -297,9 +297,9 @@ open class LegendRenderer: Renderer
         {
         case .horizontal:
             
-            var calculatedLineSizes = legend.calculatedLineSizes
-            var calculatedLabelSizes = legend.calculatedLabelSizes
-            var calculatedLabelBreakPoints = legend.calculatedLabelBreakPoints
+            var calculatedLineSizes = aLegend.calculatedLineSizes
+            var calculatedLabelSizes = aLegend.calculatedLabelSizes
+            var calculatedLabelBreakPoints = aLegend.calculatedLabelBreakPoints
             
             var posX: CGFloat = originPosX
             var posY: CGFloat
@@ -310,10 +310,10 @@ open class LegendRenderer: Renderer
                 posY = yoffset
                 
             case .bottom:
-                posY = viewPortHandler.chartHeight - yoffset - legend.neededHeight
+                posY = viewPortHandler.chartHeight - yoffset - aLegend.neededHeight
                 
             case .center:
-                posY = (viewPortHandler.chartHeight - legend.neededHeight) / 2.0 + yoffset
+                posY = (viewPortHandler.chartHeight - aLegend.neededHeight) / 2.0 + yoffset
             }
             
             var lineIndex: Int = 0
@@ -355,7 +355,7 @@ open class LegendRenderer: Renderer
                         x: posX,
                         y: posY + formYOffset,
                         entry: e,
-                        legend: legend)
+                        legend: aLegend)
                     
                     if direction == .leftToRight
                     {
@@ -398,7 +398,7 @@ open class LegendRenderer: Renderer
             
         case .vertical:
             
-            // contains the stacked legend size in pixels
+            // contains the stacked aLegend size in pixels
             var stack = CGFloat(0.0)
             var wasStacked = false
             
@@ -416,11 +416,11 @@ open class LegendRenderer: Renderer
                 posY = (horizontalAlignment == .center
                     ? viewPortHandler.chartHeight
                     : viewPortHandler.contentBottom)
-                posY -= legend.neededHeight + yoffset
+                posY -= aLegend.neededHeight + yoffset
                 
             case .center:
                 
-                posY = viewPortHandler.chartHeight / 2.0 - legend.neededHeight / 2.0 + legend.yOffset
+                posY = viewPortHandler.chartHeight / 2.0 - aLegend.neededHeight / 2.0 + aLegend.yOffset
             }
             
             for i in 0 ..< entries.count
@@ -447,7 +447,7 @@ open class LegendRenderer: Renderer
                         x: posX,
                         y: posY + formYOffset,
                         entry: e,
-                        legend: legend)
+                        legend: aLegend)
                     
                     if direction == .leftToRight
                     {

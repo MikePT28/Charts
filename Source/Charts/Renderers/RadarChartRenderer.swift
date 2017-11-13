@@ -36,9 +36,9 @@ open class RadarChartRenderer: LineRadarRenderer
         
         if radarData != nil
         {
-            let mostEntries = radarData?.maxEntryCountSet?.entryCount ?? 0
+            let mostEntries = radarData?.maxEntryCountSet?.countOfEntries ?? 0
             
-            for set in radarData!.dataSets as! [IRadarChartDataSet]
+            for set in radarData!.setsOfData as! [IRadarChartDataSet]
             {
                 if set.isVisible
                 {
@@ -71,18 +71,18 @@ open class RadarChartRenderer: LineRadarRenderer
         let factor = chart.factor
         
         let center = chart.centerOffsets
-        let entryCount = dataSet.entryCount
+        let countOfEntries = dataSet.countOfEntries
         let path = CGMutablePath()
         var hasMovedToPoint = false
         
-        for j in 0 ..< entryCount
+        for j in 0 ..< countOfEntries
         {
             guard let e = dataSet.entryForIndex(j) else { continue }
             
             let p = ChartUtils.getPosition(
                 center: center,
                 dist: CGFloat((e.y - chart.chartYMin) * Double(factor) * phaseY),
-                angle: sliceangle * CGFloat(j) * CGFloat(phaseX) + chart.rotationAngle)
+                angle: sliceangle * CGFloat(j) * CGFloat(phaseX) + chart.angleOfRotation)
             
             if p.x.isNaN
             {
@@ -101,7 +101,7 @@ open class RadarChartRenderer: LineRadarRenderer
         }
         
         // if this is the largest set, close it
-        if dataSet.entryCount < mostEntries
+        if dataSet.countOfEntries < mostEntries
         {
             // if this is not the largest set, draw a line to the center before closing
             path.addLine(to: center)
@@ -166,18 +166,18 @@ open class RadarChartRenderer: LineRadarRenderer
                 continue
             }
             
-            let entryCount = dataSet.entryCount
+            let countOfEntries = dataSet.countOfEntries
             
             let iconsOffset = dataSet.iconsOffset
             
-            for j in 0 ..< entryCount
+            for j in 0 ..< countOfEntries
             {
                 guard let e = dataSet.entryForIndex(j) else { continue }
                 
                 let p = ChartUtils.getPosition(
                     center: center,
                     dist: CGFloat(e.y - chart.chartYMin) * factor * CGFloat(phaseY),
-                    angle: sliceangle * CGFloat(j) * CGFloat(phaseX) + chart.rotationAngle)
+                    angle: sliceangle * CGFloat(j) * CGFloat(phaseX) + chart.angleOfRotation)
                 
                 let valueFont = dataSet.valueFont
                 
@@ -204,7 +204,7 @@ open class RadarChartRenderer: LineRadarRenderer
                     var pIcon = ChartUtils.getPosition(
                         center: center,
                         dist: CGFloat(e.y) * factor * CGFloat(phaseY) + iconsOffset.y,
-                        angle: sliceangle * CGFloat(j) * CGFloat(phaseX) + chart.rotationAngle)
+                        angle: sliceangle * CGFloat(j) * CGFloat(phaseX) + chart.angleOfRotation)
                     pIcon.y += iconsOffset.x
                     
                     ChartUtils.drawImage(context: context,
@@ -238,7 +238,7 @@ open class RadarChartRenderer: LineRadarRenderer
         // calculate the factor that is needed for transforming the value to
         // pixels
         let factor = chart.factor
-        let rotationangle = chart.rotationAngle
+        let rotationangle = chart.angleOfRotation
         
         let center = chart.centerOffsets
         
@@ -248,7 +248,7 @@ open class RadarChartRenderer: LineRadarRenderer
         context.setAlpha(chart.webAlpha)
         
         let xIncrements = 1 + chart.skipWebLineCount
-        let maxEntryCount = chart.data?.maxEntryCountSet?.entryCount ?? 0
+        let maxEntryCount = chart.data?.maxEntryCountSet?.countOfEntries ?? 0
 
         for i in stride(from: 0, to: maxEntryCount, by: xIncrements)
         {
@@ -270,11 +270,11 @@ open class RadarChartRenderer: LineRadarRenderer
         context.setStrokeColor(chart.innerWebColor.cgColor)
         context.setAlpha(chart.webAlpha)
         
-        let labelCount = chart.yAxis.entryCount
+        let labelCount = chart.yAxis.countOfEntries
         
         for j in 0 ..< labelCount
         {
-            for i in 0 ..< data.entryCount
+            for i in 0 ..< data.countOfEntries
             {
                 let r = CGFloat(chart.yAxis.entries[j] - chart.chartYMin) * factor
 
@@ -315,7 +315,7 @@ open class RadarChartRenderer: LineRadarRenderer
         for high in indices
         {
             guard
-                let set = chart.data?.getDataSetByIndex(high.dataSetIndex) as? IRadarChartDataSet,
+                let set = chart.data?.getDataSetByIndex(high.indexOfDataSet) as? IRadarChartDataSet,
                 set.isHighlightEnabled
                 else { continue }
             
@@ -337,14 +337,14 @@ open class RadarChartRenderer: LineRadarRenderer
                 context.setLineDash(phase: 0.0, lengths: [])
             }
             
-            context.setStrokeColor(set.highlightColor.cgColor)
+            context.setStrokeColor(set.highlightColour.cgColor)
             
             let y = e.y - chart.chartYMin
             
             _highlightPointBuffer = ChartUtils.getPosition(
                 center: center,
                 dist: CGFloat(y) * factor * CGFloat(animator.phaseY),
-                angle: sliceangle * CGFloat(high.x) * CGFloat(animator.phaseX) + chart.rotationAngle)
+                angle: sliceangle * CGFloat(high.x) * CGFloat(animator.phaseX) + chart.angleOfRotation)
             
             high.setDraw(pt: _highlightPointBuffer)
             

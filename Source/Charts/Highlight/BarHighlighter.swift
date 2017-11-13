@@ -24,12 +24,12 @@ open class BarHighlighter: ChartHighlighter
             return nil
         }
         
-        if let barData = (self.chart as? BarChartDataProvider)?.barData
+        if let barData = (self.chart as? BarChartDataProvider)?.dataBar
         {
             let pos = getValsForTouch(x: x, y: y)
             
             if
-                let set = barData.getDataSetByIndex(high!.dataSetIndex) as? IBarChartDataSet,
+                let set = barData.getDataSetByIndex(high!.indexOfDataSet) as? IBarChartDataSet,
                 set.isStacked
             {
                 return getStackedHighlight(high: high!,
@@ -50,7 +50,7 @@ open class BarHighlighter: ChartHighlighter
     
     internal override var data: ChartData?
     {
-        return (chart as? BarChartDataProvider)?.barData
+        return (chart as? BarChartDataProvider)?.dataBar
     }
     
     /// This method creates the Highlight object that also indicates which value of a stacked BarEntry has been selected.
@@ -88,7 +88,7 @@ open class BarHighlighter: ChartHighlighter
                              y: entry.y,
                              xPx: pixel.x,
                              yPx: pixel.y,
-                             dataSetIndex: high.dataSetIndex,
+                             dataSetIndex: high.indexOfDataSet,
                              stackIndex: stackIndex,
                              axis: high.axis)
         }

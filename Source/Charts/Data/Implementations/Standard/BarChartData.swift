@@ -19,9 +19,9 @@ open class BarChartData: BarLineScatterCandleBubbleChartData
         super.init()
     }
     
-    public override init(dataSets: [IChartDataSet]?)
+    public override init(setsOfData: [IChartDataSet]?)
     {
-        super.init(dataSets: dataSets)
+        super.init(setsOfData: setsOfData)
     }
     
     /// The width of the bars on the x-axis, in values (not pixels)
@@ -38,7 +38,7 @@ open class BarChartData: BarLineScatterCandleBubbleChartData
     /// - parameter barSpace: The space between individual bars in values (not pixels) e.g. 0.1f for bar width 1f
     @objc open func groupBars(fromX: Double, groupSpace: Double, barSpace: Double)
     {
-        let setCount = _dataSets.count
+        let setCount = _setsOfData.count
         if setCount <= 1
         {
             print("BarData needs to hold at least 2 BarDataSets to allow grouping.", terminator: "\n")
@@ -46,7 +46,7 @@ open class BarChartData: BarLineScatterCandleBubbleChartData
         }
         
         let max = maxEntryCountSet
-        let maxEntryCount = max?.entryCount ?? 0
+        let maxEntryCount = max?.countOfEntries ?? 0
         
         let groupSpaceWidthHalf = groupSpace / 2.0
         let barSpaceHalf = barSpace / 2.0
@@ -61,12 +61,12 @@ open class BarChartData: BarLineScatterCandleBubbleChartData
             let start = fromX
             fromX += groupSpaceWidthHalf
             
-            for set in _dataSets as! [IBarChartDataSet]
+            for set in _setsOfData as! [IBarChartDataSet]
             {
                 fromX += barSpaceHalf
                 fromX += barWidthHalf
                 
-                if i < set.entryCount
+                if i < set.countOfEntries
                 {
                     if let entry = set.entryForIndex(i)
                     {
@@ -100,7 +100,7 @@ open class BarChartData: BarLineScatterCandleBubbleChartData
     /// - parameter barSpace:
     @objc open func groupWidth(groupSpace: Double, barSpace: Double) -> Double
     {
-        return Double(_dataSets.count) * (self.barWidth + barSpace) + groupSpace
+        return Double(_setsOfData.count) * (self.barWidth + barSpace) + groupSpace
     }
     
 }

@@ -71,7 +71,7 @@ open class YAxis: AxisBase
     @objc open var spaceBottom = CGFloat(0.1)
     
     /// the position of the y-labels relative to the chart
-    @objc open var labelPosition = LabelPosition.outsideChart
+    @objc open var positionOfLabel = LabelPosition.outsideChart
     
     /// the side this axis object represents
     fileprivate var _axisDependency = AxisDependency.left
@@ -111,7 +111,7 @@ open class YAxis: AxisBase
     @objc open func requiredSize() -> CGSize
     {
         let label = getLongestLabel() as NSString
-        var size = label.size(withAttributes: [NSAttributedStringKey.font: labelFont])
+        var size = label.size(withAttributes: [NSAttributedStringKey.font: fontOfLabel])
         size.width += xOffset * 2.0
         size.height += yOffset * 2.0
         size.width = max(minWidth, min(size.width, maxWidth > 0.0 ? maxWidth : size.width))
@@ -126,7 +126,7 @@ open class YAxis: AxisBase
     /// - returns: `true` if this axis needs horizontal offset, `false` ifno offset is needed.
     @objc open var needsOffset: Bool
     {
-        if isEnabled && isDrawLabelsEnabled && labelPosition == .outsideChart
+        if isEnabled && isDrawLabelsEnabled && positionOfLabel == .outsideChart
         {
             return true
         }

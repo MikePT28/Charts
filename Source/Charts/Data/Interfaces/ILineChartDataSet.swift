@@ -43,7 +43,7 @@ public protocol ILineChartDataSet: ILineRadarChartDataSet
     var isDrawSteppedEnabled: Bool { get }
 
     /// The radius of the drawn circles.
-    var circleRadius: CGFloat { get set }
+    var radiusOfCircle: CGFloat { get set }
     
     /// The hole radius of the drawn circles.
     var circleHoleRadius: CGFloat { get set }

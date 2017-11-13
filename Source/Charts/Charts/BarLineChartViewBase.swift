@@ -76,7 +76,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     #if !os(tvOS)
     @objc internal var _pinchGestureRecognizer: NSUIPinchGestureRecognizer!
     #endif
-    @objc internal var _panGestureRecognizer: NSUIPanGestureRecognizer!
+    @objc internal var _internalPanGestureRecognizer: NSUIPanGestureRecognizer!
     
     /// flag that indicates if a custom viewport offset has been set
     fileprivate var _customViewPortEnabled = false
@@ -116,16 +116,16 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         _tapGestureRecognizer = NSUITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(_:)))
         _doubleTapGestureRecognizer = NSUITapGestureRecognizer(target: self, action: #selector(doubleTapGestureRecognized(_:)))
         _doubleTapGestureRecognizer.nsuiNumberOfTapsRequired = 2
-        _panGestureRecognizer = NSUIPanGestureRecognizer(target: self, action: #selector(panGestureRecognized(_:)))
+        _internalPanGestureRecognizer = NSUIPanGestureRecognizer(target: self, action: #selector(panGestureRecognized(_:)))
         
-        _panGestureRecognizer.delegate = self
+        _internalPanGestureRecognizer.delegate = self
         
         self.addGestureRecognizer(_tapGestureRecognizer)
         self.addGestureRecognizer(_doubleTapGestureRecognizer)
-        self.addGestureRecognizer(_panGestureRecognizer)
+        self.addGestureRecognizer(_internalPanGestureRecognizer)
         
         _doubleTapGestureRecognizer.isEnabled = _doubleTapToZoomEnabled
-        _panGestureRecognizer.isEnabled = _dragXEnabled || _dragYEnabled
+        _internalPanGestureRecognizer.isEnabled = _dragXEnabled || _dragYEnabled
 
         #if !os(tvOS)
             _pinchGestureRecognizer = NSUIPinchGestureRecognizer(target: self, action: #selector(BarLineChartViewBase.pinchGestureRecognized(_:)))
@@ -331,7 +331,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
                 max: _xAxis._axisMaximum,
                 inverted: false)
 
-            if _legend !== nil
+            if _aLegend !== nil
             {
                 _legendRenderer?.computeLegend(data: data)
             }
@@ -354,30 +354,30 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     
     internal func calculateLegendOffsets(offsetLeft: inout CGFloat, offsetTop: inout CGFloat, offsetRight: inout CGFloat, offsetBottom: inout CGFloat)
     {
-        // setup offsets for legend
-        if _legend !== nil && _legend.isEnabled && !_legend.drawInside
+        // setup offsets for aLegend
+        if _aLegend !== nil && _aLegend.isEnabled && !_aLegend.drawInside
         {
-            switch _legend.orientation
+            switch _aLegend.orientation
             {
             case .vertical:
                 
-                switch _legend.horizontalAlignment
+                switch _aLegend.horizontalAlignment
                 {
                 case .left:
-                    offsetLeft += min(_legend.neededWidth, _viewPortHandler.chartWidth * _legend.maxSizePercent) + _legend.xOffset
+                    offsetLeft += min(_aLegend.neededWidth, _viewPortHandler.chartWidth * _aLegend.maxSizePercent) + _aLegend.xOffset
                     
                 case .right:
-                    offsetRight += min(_legend.neededWidth, _viewPortHandler.chartWidth * _legend.maxSizePercent) + _legend.xOffset
+                    offsetRight += min(_aLegend.neededWidth, _viewPortHandler.chartWidth * _aLegend.maxSizePercent) + _aLegend.xOffset
                     
                 case .center:
                     
-                    switch _legend.verticalAlignment
+                    switch _aLegend.verticalAlignment
                     {
                     case .top:
-                        offsetTop += min(_legend.neededHeight, _viewPortHandler.chartHeight * _legend.maxSizePercent) + _legend.yOffset
+                        offsetTop += min(_aLegend.neededHeight, _viewPortHandler.chartHeight * _aLegend.maxSizePercent) + _aLegend.yOffset
                         
                     case .bottom:
-                        offsetBottom += min(_legend.neededHeight, _viewPortHandler.chartHeight * _legend.maxSizePercent) + _legend.yOffset
+                        offsetBottom += min(_aLegend.neededHeight, _viewPortHandler.chartHeight * _aLegend.maxSizePercent) + _aLegend.yOffset
                         
                     default:
                         break
@@ -386,17 +386,17 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
                 
             case .horizontal:
                 
-                switch _legend.verticalAlignment
+                switch _aLegend.verticalAlignment
                 {
                 case .top:
-                    offsetTop += min(_legend.neededHeight, _viewPortHandler.chartHeight * _legend.maxSizePercent) + _legend.yOffset
+                    offsetTop += min(_aLegend.neededHeight, _viewPortHandler.chartHeight * _aLegend.maxSizePercent) + _aLegend.yOffset
                     if xAxis.isEnabled && xAxis.isDrawLabelsEnabled
                     {
                         offsetTop += xAxis.labelRotatedHeight
                     }
                     
                 case .bottom:
-                    offsetBottom += min(_legend.neededHeight, _viewPortHandler.chartHeight * _legend.maxSizePercent) + _legend.yOffset
+                    offsetBottom += min(_aLegend.neededHeight, _viewPortHandler.chartHeight * _aLegend.maxSizePercent) + _aLegend.yOffset
                     if xAxis.isEnabled && xAxis.isDrawLabelsEnabled
                     {
                         offsetBottom += xAxis.labelRotatedHeight
@@ -439,15 +439,15 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
                 let xlabelheight = xAxis.labelRotatedHeight + xAxis.yOffset
                 
                 // offsets for x-labels
-                if xAxis.labelPosition == .bottom
+                if xAxis.positionOfLabel == .bottom
                 {
                     offsetBottom += xlabelheight
                 }
-                else if xAxis.labelPosition == .top
+                else if xAxis.positionOfLabel == .top
                 {
                     offsetTop += xlabelheight
                 }
-                else if xAxis.labelPosition == .bothSided
+                else if xAxis.positionOfLabel == .bothSided
                 {
                     offsetBottom += xlabelheight
                     offsetTop += xlabelheight
@@ -555,7 +555,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         
         if recognizer.state == NSUIGestureRecognizerState.ended
         {
-            if _data !== nil && _doubleTapToZoomEnabled && (data?.entryCount ?? 0) > 0
+            if _data !== nil && _doubleTapToZoomEnabled && (data?.countOfEntries ?? 0) > 0
             {
                 var location = recognizer.location(in: self)
                 location.x = location.x - _viewPortHandler.offsetLeft
@@ -869,7 +869,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     
     fileprivate func nsuiGestureRecognizerShouldBegin(_ gestureRecognizer: NSUIGestureRecognizer) -> Bool
     {
-        if gestureRecognizer == _panGestureRecognizer
+        if gestureRecognizer == _internalPanGestureRecognizer
         {
             if _data === nil ||
                 !isDragEnabled ||
@@ -927,7 +927,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         
         if (gestureRecognizer.isKind(of: NSUIPanGestureRecognizer.self) &&
             otherGestureRecognizer.isKind(of: NSUIPanGestureRecognizer.self) && (
-                gestureRecognizer == _panGestureRecognizer
+                gestureRecognizer == _internalPanGestureRecognizer
             ))
         {
             var scrollView = self.superview
@@ -1571,7 +1571,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     }
     
     /// is scaling enabled? (zooming in and out by gesture) for the chart (this does not affect dragging).
-    @objc open func setScaleEnabled(_ enabled: Bool)
+    @objc open func enableScale(enabled: Bool)
     {
         if _scaleXEnabled != enabled || _scaleYEnabled != enabled
         {
@@ -1704,7 +1704,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         let h = getHighlightByTouchPoint(pt)
         if h !== nil
         {
-            return _data?.getDataSetByIndex(h!.dataSetIndex) as! IBarLineScatterCandleBubbleChartDataSet!
+            return _data?.getDataSetByIndex(h!.indexOfDataSet) as! IBarLineScatterCandleBubbleChartDataSet!
         }
         return nil
     }

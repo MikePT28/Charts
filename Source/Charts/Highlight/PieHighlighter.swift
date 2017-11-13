@@ -17,7 +17,7 @@ open class PieHighlighter: PieRadarHighlighter
 {
     open override func closestHighlight(index: Int, x: CGFloat, y: CGFloat) -> Highlight?
     {
-        guard let set = chart?.data?.dataSets[0]
+        guard let set = chart?.data?.setsOfData[0]
             else { return nil }
         
         guard let entry = set.entryForIndex(index)

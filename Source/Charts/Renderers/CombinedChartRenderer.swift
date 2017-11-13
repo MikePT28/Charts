@@ -51,7 +51,7 @@ open class CombinedChartRenderer: DataRenderer
             switch (order)
             {
             case .bar:
-                if chart.barData !== nil
+                if chart.dataBar !== nil
                 {
                     _renderers.append(BarChartRenderer(dataProvider: chart, animator: animator, viewPortHandler: viewPortHandler))
                 }
@@ -129,7 +129,7 @@ open class CombinedChartRenderer: DataRenderer
             
             if renderer is BarChartRenderer
             {
-                data = (renderer as! BarChartRenderer).dataProvider?.barData
+                data = (renderer as! BarChartRenderer).dataProvider?.dataBar
             }
             else if renderer is LineChartRenderer
             {

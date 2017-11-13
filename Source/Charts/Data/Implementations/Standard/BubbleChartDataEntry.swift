@@ -27,7 +27,7 @@ open class BubbleChartDataEntry: ChartDataEntry
     /// - parameter size: The size of the bubble.
     @objc public init(x: Double, y: Double, size: CGFloat)
     {
-        super.init(x: x, y: y)
+        super.init(pointX: x, pointY: y)
         
         self.size = size
     }

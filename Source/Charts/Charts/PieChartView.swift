@@ -164,7 +164,7 @@ open class PieChartView: PieRadarChartViewBase
         
         r -= off // offset to keep things inside the chart
         
-        let rotationAngle = self.rotationAngle
+        let rotationAngle = self.angleOfRotation
         
         let entryIndex = Int(highlight.x)
         
@@ -186,23 +186,23 @@ open class PieChartView: PieRadarChartViewBase
         
         guard let data = _data else { return }
 
-        let entryCount = data.entryCount
+        let countOfEntries = data.countOfEntries
         
-        _drawAngles.reserveCapacity(entryCount)
-        _absoluteAngles.reserveCapacity(entryCount)
+        _drawAngles.reserveCapacity(countOfEntries)
+        _absoluteAngles.reserveCapacity(countOfEntries)
         
         let yValueSum = (_data as! PieChartData).yValueSum
         
-        var dataSets = data.dataSets
+        var setsOfData = data.setsOfData
 
         var cnt = 0
 
         for i in 0 ..< data.dataSetCount
         {
-            let set = dataSets[i]
-            let entryCount = set.entryCount
+            let set = setsOfData[i]
+            let countOfEntries = set.countOfEntries
 
-            for j in 0 ..< entryCount
+            for j in 0 ..< countOfEntries
             {
                 guard let e = set.entryForIndex(j) else { continue }
                 
@@ -264,7 +264,7 @@ open class PieChartView: PieRadarChartViewBase
     open override func indexForAngle(_ angle: CGFloat) -> Int
     {
         // take the current angle of the chart into consideration
-        let a = ChartUtils.normalizedAngleFromAngle(angle - self.rotationAngle)
+        let a = ChartUtils.normalizedAngleFromAngle(angle - self.angleOfRotation)
         for i in 0 ..< _absoluteAngles.count
         {
             if _absoluteAngles[i] > a
@@ -279,11 +279,11 @@ open class PieChartView: PieRadarChartViewBase
     /// - returns: The index of the DataSet this x-index belongs to.
     @objc open func dataSetIndexForIndex(_ xValue: Double) -> Int
     {
-        var dataSets = _data?.dataSets ?? []
+        var setsOfData = _data?.setsOfData ?? []
         
-        for i in 0 ..< dataSets.count
+        for i in 0 ..< setsOfData.count
         {
-            if (dataSets[i].entryForXValue(xValue, closestToY: Double.nan) !== nil)
+            if (setsOfData[i].entryForXValue(xValue, closestToY: Double.nan) !== nil)
             {
                 return i
             }
@@ -457,7 +457,7 @@ open class PieChartView: PieRadarChartViewBase
     
     internal override var requiredLegendOffset: CGFloat
     {
-        return _legend.font.pointSize * 2.0
+        return _aLegend.font.pointSize * 2.0
     }
     
     internal override var requiredBaseOffset: CGFloat

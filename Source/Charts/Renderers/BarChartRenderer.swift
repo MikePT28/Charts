@@ -37,7 +37,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
     
     open override func initBuffers()
     {
-        if let barData = dataProvider?.barData
+        if let barData = dataProvider?.dataBar
         {
             // Matche buffers count to dataset count
             if _buffers.count != barData.dataSetCount
@@ -54,8 +54,8 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
             
             for i in stride(from: 0, to: barData.dataSetCount, by: 1)
             {
-                let set = barData.dataSets[i] as! IBarChartDataSet
-                let size = set.entryCount * (set.isStacked ? set.stackSize : 1)
+                let set = barData.setsOfData[i] as! IBarChartDataSet
+                let size = set.countOfEntries * (set.isStacked ? set.stackSize : 1)
                 if _buffers[i].rects.count != size
                 {
                     _buffers[i].rects = [CGRect](repeating: CGRect(), count: size)
@@ -72,7 +72,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
     {
         guard
             let dataProvider = dataProvider,
-            let barData = dataProvider.barData,
+            let barData = dataProvider.dataBar,
             let animator = animator
             else { return }
         
@@ -88,7 +88,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
         var x: Double
         var y: Double
         
-        for i in stride(from: 0, to: min(Int(ceil(Double(dataSet.entryCount) * animator.phaseX)), dataSet.entryCount), by: 1)
+        for i in stride(from: 0, to: min(Int(ceil(Double(dataSet.countOfEntries) * animator.phaseX)), dataSet.countOfEntries), by: 1)
         {
             guard let e = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
             
@@ -185,7 +185,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
     {
         guard
             let dataProvider = dataProvider,
-            let barData = dataProvider.barData
+            let barData = dataProvider.dataBar
             else { return }
         
         for i in 0 ..< barData.dataSetCount
@@ -229,14 +229,14 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
         {
             guard
                 let animator = animator,
-                let barData = dataProvider.barData
+                let barData = dataProvider.dataBar
                 else { return }
             
             let barWidth = barData.barWidth
             let barWidthHalf = barWidth / 2.0
             var x: Double = 0.0
             
-            for i in stride(from: 0, to: min(Int(ceil(Double(dataSet.entryCount) * animator.phaseX)), dataSet.entryCount), by: 1)
+            for i in stride(from: 0, to: min(Int(ceil(Double(dataSet.countOfEntries) * animator.phaseX)), dataSet.countOfEntries), by: 1)
             {
                 guard let e = dataSet.entryForIndex(i) as? BarChartDataEntry else { continue }
                 
@@ -358,11 +358,11 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
             guard
                 let dataProvider = dataProvider,
                 let viewPortHandler = self.viewPortHandler,
-                let barData = dataProvider.barData,
+                let barData = dataProvider.dataBar,
                 let animator = animator
                 else { return }
             
-            var dataSets = barData.dataSets
+            var setsOfData = barData.setsOfData
 
             let valueOffsetPlus: CGFloat = 4.5
             var posOffset: CGFloat
@@ -371,7 +371,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
             
             for dataSetIndex in 0 ..< barData.dataSetCount
             {
-                guard let dataSet = dataSets[dataSetIndex] as? IBarChartDataSet else { continue }
+                guard let dataSet = setsOfData[dataSetIndex] as? IBarChartDataSet else { continue }
                 
                 if !shouldDrawValues(forDataSet: dataSet)
                 {
@@ -405,7 +405,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 // if only single values are drawn (sum)
                 if !dataSet.isStacked
                 {
-                    for j in 0 ..< Int(ceil(Double(dataSet.entryCount) * animator.phaseX))
+                    for j in 0 ..< Int(ceil(Double(dataSet.countOfEntries) * animator.phaseX))
                     {
                         guard let e = dataSet.entryForIndex(j) as? BarChartDataEntry else { continue }
                         
@@ -469,7 +469,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                     
                     var bufferIndex = 0
                     
-                    for index in 0 ..< Int(ceil(Double(dataSet.entryCount) * animator.phaseX))
+                    for index in 0 ..< Int(ceil(Double(dataSet.countOfEntries) * animator.phaseX))
                     {
                         guard let e = dataSet.entryForIndex(index) as? BarChartDataEntry else { continue }
                         
@@ -629,7 +629,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
     {
         guard
             let dataProvider = dataProvider,
-            let barData = dataProvider.barData
+            let barData = dataProvider.dataBar
             else { return }
         
         context.saveGState()
@@ -639,7 +639,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
         for high in indices
         {
             guard
-                let set = barData.getDataSetByIndex(high.dataSetIndex) as? IBarChartDataSet,
+                let set = barData.getDataSetByIndex(high.indexOfDataSet) as? IBarChartDataSet,
                 set.isHighlightEnabled
                 else { continue }
             
@@ -652,7 +652,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 
                 let trans = dataProvider.getTransformer(forAxis: set.axisDependency)
                 
-                context.setFillColor(set.highlightColor.cgColor)
+                context.setFillColor(set.highlightColour.cgColor)
                 context.setAlpha(set.highlightAlpha)
                 
                 let isStack = high.stackIndex >= 0 && e.isStacked

@@ -67,11 +67,11 @@ open class YAxisRendererHorizontalBarChart: YAxisRenderer
             return
         }
         
-        let lineHeight = yAxis.labelFont.lineHeight
+        let lineHeight = yAxis.fontOfLabel.lineHeight
         let baseYOffset: CGFloat = 2.5
         
         let dependency = yAxis.axisDependency
-        let labelPosition = yAxis.labelPosition
+        let labelPosition = yAxis.positionOfLabel
         
         var yPos: CGFloat = 0.0
         
@@ -162,11 +162,11 @@ open class YAxisRendererHorizontalBarChart: YAxisRenderer
             yAxis = axis as? YAxis
             else { return }
         
-        let labelFont = yAxis.labelFont
-        let labelTextColor = yAxis.labelTextColor
+        let labelFont = yAxis.fontOfLabel
+        let labelTextColor = yAxis.textColorOfLabel
         
         let from = yAxis.isDrawBottomYLabelEntryEnabled ? 0 : 1
-        let to = yAxis.isDrawTopYLabelEntryEnabled ? yAxis.entryCount : (yAxis.entryCount - 1)
+        let to = yAxis.isDrawTopYLabelEntryEnabled ? yAxis.countOfEntries : (yAxis.countOfEntries - 1)
         
         for i in stride(from: from, to: to, by: 1)
         {
@@ -212,11 +212,11 @@ open class YAxisRendererHorizontalBarChart: YAxisRenderer
             else { return [CGPoint]() }
         
         var positions = [CGPoint]()
-        positions.reserveCapacity(yAxis.entryCount)
+        positions.reserveCapacity(yAxis.countOfEntries)
         
         let entries = yAxis.entries
         
-        for i in stride(from: 0, to: yAxis.entryCount, by: 1)
+        for i in stride(from: 0, to: yAxis.countOfEntries, by: 1)
         {
             positions.append(CGPoint(x: entries[i], y: 0.0))
         }
@@ -311,7 +311,7 @@ open class YAxisRendererHorizontalBarChart: YAxisRenderer
             context.move(to: CGPoint(x: position.x, y: viewPortHandler.contentTop))
             context.addLine(to: CGPoint(x: position.x, y: viewPortHandler.contentBottom))
             
-            context.setStrokeColor(l.lineColor.cgColor)
+            context.setStrokeColor(l.colorOfLine.cgColor)
             context.setLineWidth(l.lineWidth)
             if l.lineDashLengths != nil
             {
@@ -334,7 +334,7 @@ open class YAxisRendererHorizontalBarChart: YAxisRenderer
                 let xOffset: CGFloat = l.lineWidth + l.xOffset
                 let yOffset: CGFloat = 2.0 + l.yOffset
 
-                if l.labelPosition == .rightTop
+                if l.positionOfLabel == .rightTop
                 {
                     ChartUtils.drawText(context: context,
                         text: label,
@@ -344,7 +344,7 @@ open class YAxisRendererHorizontalBarChart: YAxisRenderer
                         align: .left,
                         attributes: [NSAttributedStringKey.font: l.valueFont, NSAttributedStringKey.foregroundColor: l.valueTextColor])
                 }
-                else if l.labelPosition == .rightBottom
+                else if l.positionOfLabel == .rightBottom
                 {
                     ChartUtils.drawText(context: context,
                         text: label,
@@ -354,7 +354,7 @@ open class YAxisRendererHorizontalBarChart: YAxisRenderer
                         align: .left,
                         attributes: [NSAttributedStringKey.font: l.valueFont, NSAttributedStringKey.foregroundColor: l.valueTextColor])
                 }
-                else if l.labelPosition == .leftTop
+                else if l.positionOfLabel == .leftTop
                 {
                     ChartUtils.drawText(context: context,
                         text: label,

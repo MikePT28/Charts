@@ -78,7 +78,7 @@ open class PieRadarChartViewBase: ChartViewBase
     {
         get
         {
-            return data?.entryCount ?? 0
+            return data?.countOfEntries ?? 0
         }
     }
     
@@ -86,7 +86,7 @@ open class PieRadarChartViewBase: ChartViewBase
     {
         calcMinMax()
         
-        if let data = _data , _legend !== nil
+        if let data = _data , _aLegend !== nil
         {
             _legendRenderer.computeLegend(data: data)
         }
@@ -103,37 +103,37 @@ open class PieRadarChartViewBase: ChartViewBase
         var legendBottom = CGFloat(0.0)
         var legendTop = CGFloat(0.0)
 
-        if _legend != nil && _legend.enabled && !_legend.drawInside
+        if _aLegend != nil && _aLegend.enabled && !_aLegend.drawInside
         {
-            let fullLegendWidth = min(_legend.neededWidth, _viewPortHandler.chartWidth * _legend.maxSizePercent)
+            let fullLegendWidth = min(_aLegend.neededWidth, _viewPortHandler.chartWidth * _aLegend.maxSizePercent)
             
-            switch _legend.orientation
+            switch _aLegend.orientation
             {
             case .vertical:
                 
                 var xLegendOffset: CGFloat = 0.0
                 
-                if _legend.horizontalAlignment == .left
-                    || _legend.horizontalAlignment == .right
+                if _aLegend.horizontalAlignment == .left
+                    || _aLegend.horizontalAlignment == .right
                 {
-                    if _legend.verticalAlignment == .center
+                    if _aLegend.verticalAlignment == .center
                     {
-                        // this is the space between the legend and the chart
+                        // this is the space between the aLegend and the chart
                         let spacing = CGFloat(13.0)
                         
                         xLegendOffset = fullLegendWidth + spacing
                     }
                     else
                     {
-                        // this is the space between the legend and the chart
+                        // this is the space between the aLegend and the chart
                         let spacing = CGFloat(8.0)
                         
                         let legendWidth = fullLegendWidth + spacing
-                        let legendHeight = _legend.neededHeight + _legend.textHeightMax
+                        let legendHeight = _aLegend.neededHeight + _aLegend.textHeightMax
                         
                         let c = self.midPoint
                         
-                        let bottomX = _legend.horizontalAlignment == .right
+                        let bottomX = _aLegend.horizontalAlignment == .right
                             ? self.bounds.width - legendWidth + 15.0
                             : legendWidth - 15.0
                         let bottomY = legendHeight + 15
@@ -158,7 +158,7 @@ open class PieRadarChartViewBase: ChartViewBase
                     }
                 }
                 
-                switch _legend.horizontalAlignment
+                switch _aLegend.horizontalAlignment
                 {
                 case .left:
                     legendLeft = xLegendOffset
@@ -168,13 +168,13 @@ open class PieRadarChartViewBase: ChartViewBase
                     
                 case .center:
                     
-                    switch _legend.verticalAlignment
+                    switch _aLegend.verticalAlignment
                     {
                     case .top:
-                        legendTop = min(_legend.neededHeight, _viewPortHandler.chartHeight * _legend.maxSizePercent)
+                        legendTop = min(_aLegend.neededHeight, _viewPortHandler.chartHeight * _aLegend.maxSizePercent)
                         
                     case .bottom:
-                        legendBottom = min(_legend.neededHeight, _viewPortHandler.chartHeight * _legend.maxSizePercent)
+                        legendBottom = min(_aLegend.neededHeight, _viewPortHandler.chartHeight * _aLegend.maxSizePercent)
                         
                     default:
                         break
@@ -185,8 +185,8 @@ open class PieRadarChartViewBase: ChartViewBase
                 
                 var yLegendOffset: CGFloat = 0.0
                 
-                if _legend.verticalAlignment == .top
-                    || _legend.verticalAlignment == .bottom
+                if _aLegend.verticalAlignment == .top
+                    || _aLegend.verticalAlignment == .bottom
                 {
                     // It's possible that we do not need this offset anymore as it
                     //   is available through the extraOffsets, but changing it can mean
@@ -194,11 +194,11 @@ open class PieRadarChartViewBase: ChartViewBase
                     let yOffset = self.requiredLegendOffset
                     
                     yLegendOffset = min(
-                        _legend.neededHeight + yOffset,
-                        _viewPortHandler.chartHeight * _legend.maxSizePercent)
+                        _aLegend.neededHeight + yOffset,
+                        _viewPortHandler.chartHeight * _aLegend.maxSizePercent)
                 }
                 
-                switch _legend.verticalAlignment
+                switch _aLegend.verticalAlignment
                 {
                 case .top:
                     
@@ -327,7 +327,7 @@ open class PieRadarChartViewBase: ChartViewBase
     ///
     /// **default**: 270 --> top (NORTH)
     /// - returns: Will always return a normalized value, which will be between 0.0 < 360.0
-    @objc open var rotationAngle: CGFloat
+    @objc open var angleOfRotation: CGFloat
     {
         get
         {
@@ -438,7 +438,7 @@ open class PieRadarChartViewBase: ChartViewBase
         
         _spinAnimator = Animator()
         _spinAnimator.updateBlock = {
-            self.rotationAngle = (toAngle - fromAngle) * CGFloat(self._spinAnimator.phaseX) + fromAngle
+            self.angleOfRotation = (toAngle - fromAngle) * CGFloat(self._spinAnimator.phaseX) + fromAngle
         }
         _spinAnimator.stopBlock = { self._spinAnimator = nil }
         
@@ -771,7 +771,7 @@ open class PieRadarChartViewBase: ChartViewBase
     /// updates the view rotation depending on the given touch position, also takes the starting angle into consideration
     fileprivate func updateGestureRotation(x: CGFloat, y: CGFloat)
     {
-        self.rotationAngle = angleForPoint(x: x, y: y) - _startAngle
+        self.angleOfRotation = angleForPoint(x: x, y: y) - _startAngle
     }
     
     @objc open func stopDeceleration()
@@ -791,7 +791,7 @@ open class PieRadarChartViewBase: ChartViewBase
         
         let timeInterval = CGFloat(currentTime - _decelerationLastTime)
         
-        self.rotationAngle += _decelerationAngularVelocity * timeInterval
+        self.angleOfRotation += _decelerationAngularVelocity * timeInterval
         
         _decelerationLastTime = currentTime
         
@@ -847,14 +847,14 @@ open class PieRadarChartViewBase: ChartViewBase
         {
             let angle = ChartUtils.Math.FRAD2DEG * recognizer.nsuiRotation
             
-            self.rotationAngle = _startAngle + angle
+            self.angleOfRotation = _startAngle + angle
             setNeedsDisplay()
         }
         else if recognizer.state == NSUIGestureRecognizerState.ended
         {
             let angle = ChartUtils.Math.FRAD2DEG * recognizer.nsuiRotation
             
-            self.rotationAngle = _startAngle + angle
+            self.angleOfRotation = _startAngle + angle
             setNeedsDisplay()
             
             if isDragDecelerationEnabled

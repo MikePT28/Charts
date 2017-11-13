@@ -24,11 +24,11 @@ open class ChartDataEntry: ChartDataEntryBase
     /// An Entry represents one single entry in the chart.
     /// - parameter x: the x value
     /// - parameter y: the y value (the actual value of the entry)
-    @objc public init(x: Double, y: Double)
+    @objc public init(pointX: Double, pointY: Double)
     {
-        super.init(y: y)
+        super.init(y: pointY)
         
-        self.x = x
+        self.x = pointX
     }
     
     /// An Entry represents one single entry in the chart.

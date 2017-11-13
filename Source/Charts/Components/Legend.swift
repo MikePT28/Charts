@@ -312,7 +312,7 @@ open class Legend: ComponentBase
         let yEntrySpace = self.yEntrySpace
         let wordWrapEnabled = self.wordWrapEnabled
         let entries = self.entries
-        let entryCount = entries.count
+        let countOfEntries = entries.count
         
         textWidthMax = maxEntrySize.width
         textHeightMax = maxEntrySize.height
@@ -328,7 +328,7 @@ open class Legend: ComponentBase
             
             var wasStacked = false
             
-            for i in 0 ..< entryCount
+            for i in 0 ..< countOfEntries
             {
                 let e = entries[i]
                 let drawingForm = e.form != .none
@@ -367,7 +367,7 @@ open class Legend: ComponentBase
                     
                     width += size.width
                     
-                    if i < entryCount - 1
+                    if i < countOfEntries - 1
                     {
                         maxHeight += labelLineHeight + yEntrySpace
                     }
@@ -377,7 +377,7 @@ open class Legend: ComponentBase
                     wasStacked = true
                     width += formSize
                     
-                    if i < entryCount - 1
+                    if i < countOfEntries - 1
                     {
                         width += stackSpace
                     }
@@ -396,14 +396,14 @@ open class Legend: ComponentBase
             let contentWidth: CGFloat = viewPortHandler.contentWidth * maxSizePercent
             
             // Prepare arrays for calculated layout
-            if calculatedLabelSizes.count != entryCount
+            if calculatedLabelSizes.count != countOfEntries
             {
-                calculatedLabelSizes = [CGSize](repeating: CGSize(), count: entryCount)
+                calculatedLabelSizes = [CGSize](repeating: CGSize(), count: countOfEntries)
             }
             
-            if calculatedLabelBreakPoints.count != entryCount
+            if calculatedLabelBreakPoints.count != countOfEntries
             {
-                calculatedLabelBreakPoints = [Bool](repeating: false, count: entryCount)
+                calculatedLabelBreakPoints = [Bool](repeating: false, count: countOfEntries)
             }
             
             calculatedLineSizes.removeAll(keepingCapacity: true)
@@ -416,7 +416,7 @@ open class Legend: ComponentBase
             var requiredWidth: CGFloat = 0.0
             var stackedStartIndex: Int = -1
             
-            for i in 0 ..< entryCount
+            for i in 0 ..< countOfEntries
             {
                 let e = entries[i]
                 let drawingForm = e.form != .none
@@ -454,7 +454,7 @@ open class Legend: ComponentBase
                     }
                 }
                 
-                if label != nil || i == entryCount - 1
+                if label != nil || i == countOfEntries - 1
                 {
                     let requiredSpacing = currentLineWidth == 0.0 ? 0.0 : xEntrySpace
                     
@@ -477,7 +477,7 @@ open class Legend: ComponentBase
                         currentLineWidth = requiredWidth
                     }
                     
-                    if i == entryCount - 1
+                    if i == countOfEntries - 1
                     { // Add last line size to array
                         calculatedLineSizes.append(CGSize(width: currentLineWidth, height: labelLineHeight))
                         maxLineWidth = max(maxLineWidth, currentLineWidth)
@@ -496,11 +496,11 @@ open class Legend: ComponentBase
         neededHeight += yOffset
     }
     
-    /// MARK: - Custom legend
+    /// MARK: - Custom aLegend
     
-    /// Sets a custom legend's entries array.
+    /// Sets a custom aLegend's entries array.
     /// * A nil label will start a group.
-    /// This will disable the feature that automatically calculates the legend entries from the datasets.
+    /// This will disable the feature that automatically calculates the aLegend entries from the datasets.
     /// Call `resetCustom(...)` to re-enable automatic calculation (and then `notifyDataSetChanged()` is needed).
     @objc open func setCustom(entries: [LegendEntry])
     {
@@ -508,7 +508,7 @@ open class Legend: ComponentBase
         _isLegendCustom = true
     }
     
-    /// Calling this will disable the custom legend entries (set by `setLegend(...)`). Instead, the entries will again be calculated automatically (after `notifyDataSetChanged()` is called).
+    /// Calling this will disable the custom aLegend entries (set by `setLegend(...)`). Instead, the entries will again be calculated automatically (after `notifyDataSetChanged()` is called).
     @objc open func resetCustom()
     {
         _isLegendCustom = false

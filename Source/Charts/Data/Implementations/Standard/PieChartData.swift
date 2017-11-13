@@ -18,26 +18,26 @@ open class PieChartData: ChartData
         super.init()
     }
     
-    public override init(dataSets: [IChartDataSet]?)
+    public override init(setsOfData: [IChartDataSet]?)
     {
-        super.init(dataSets: dataSets)
+        super.init(setsOfData: setsOfData)
     }
 
     @objc var dataSet: IPieChartDataSet?
     {
         get
         {
-            return dataSets.count > 0 ? dataSets[0] as? IPieChartDataSet : nil
+            return setsOfData.count > 0 ? setsOfData[0] as? IPieChartDataSet : nil
         }
         set
         {
             if newValue != nil
             {
-                dataSets = [newValue!]
+                setsOfData = [newValue!]
             }
             else
             {
-                dataSets = []
+                setsOfData = []
             }
         }
     }
@@ -53,23 +53,23 @@ open class PieChartData: ChartData
     
     open override func getDataSetByLabel(_ label: String, ignorecase: Bool) -> IChartDataSet?
     {
-        if dataSets.count == 0 || dataSets[0].label == nil
+        if setsOfData.count == 0 || setsOfData[0].label == nil
         {
             return nil
         }
         
         if ignorecase
         {
-            if (label.caseInsensitiveCompare(dataSets[0].label!) == ComparisonResult.orderedSame)
+            if (label.caseInsensitiveCompare(setsOfData[0].label!) == ComparisonResult.orderedSame)
             {
-                return dataSets[0]
+                return setsOfData[0]
             }
         }
         else
         {
-            if label == dataSets[0].label
+            if label == setsOfData[0].label
             {
-                return dataSets[0]
+                return setsOfData[0]
             }
         }
         return nil
@@ -80,9 +80,9 @@ open class PieChartData: ChartData
         return dataSet?.entryForIndex(Int(highlight.x))
     }
     
-    open override func addDataSet(_ d: IChartDataSet!)
+    open override func add(setOfData d: IChartDataSet!)
     {   
-        super.addDataSet(d)
+        super.add(setOfData: d)
     }
     
     /// Removes the DataSet at the given index in the DataSet array from the data object.
@@ -91,7 +91,7 @@ open class PieChartData: ChartData
     /// - returns: `true` if a DataSet was removed, `false` ifno DataSet could be removed.
     open override func removeDataSetByIndex(_ index: Int) -> Bool
     {
-        if index >= _dataSets.count || index < 0
+        if index >= _setsOfData.count || index < 0
         {
             return false
         }
@@ -106,7 +106,7 @@ open class PieChartData: ChartData
         
         var yValueSum: Double = 0.0
         
-        for i in 0..<dataSet.entryCount
+        for i in 0..<dataSet.countOfEntries
         {
             yValueSum += dataSet.entryForIndex(i)?.y ?? 0.0
         }

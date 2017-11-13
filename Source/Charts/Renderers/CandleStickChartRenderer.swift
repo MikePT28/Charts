@@ -32,7 +32,7 @@ open class CandleStickChartRenderer: LineScatterCandleRadarRenderer
     {
         guard let dataProvider = dataProvider, let candleData = dataProvider.candleData else { return }
 
-        for set in candleData.dataSets as! [ICandleChartDataSet]
+        for set in candleData.setsOfData as! [ICandleChartDataSet]
         {
             if set.isVisible
             {
@@ -247,15 +247,15 @@ open class CandleStickChartRenderer: LineScatterCandleRadarRenderer
         // if values are drawn
         if isDrawingValuesAllowed(dataProvider: dataProvider)
         {
-            var dataSets = candleData.dataSets
+            var setsOfData = candleData.setsOfData
             
             let phaseY = animator.phaseY
             
             var pt = CGPoint()
             
-            for i in 0 ..< dataSets.count
+            for i in 0 ..< setsOfData.count
             {
-                guard let dataSet = dataSets[i] as? IBarLineScatterCandleBubbleChartDataSet
+                guard let dataSet = setsOfData[i] as? IBarLineScatterCandleBubbleChartDataSet
                     else { continue }
                 
                 if !shouldDrawValues(forDataSet: dataSet)
@@ -341,7 +341,7 @@ open class CandleStickChartRenderer: LineScatterCandleRadarRenderer
         for high in indices
         {
             guard
-                let set = candleData.getDataSetByIndex(high.dataSetIndex) as? ICandleChartDataSet,
+                let set = candleData.getDataSetByIndex(high.indexOfDataSet) as? ICandleChartDataSet,
                 set.isHighlightEnabled
                 else { continue }
             
@@ -354,7 +354,7 @@ open class CandleStickChartRenderer: LineScatterCandleRadarRenderer
             
             let trans = dataProvider.getTransformer(forAxis: set.axisDependency)
             
-            context.setStrokeColor(set.highlightColor.cgColor)
+            context.setStrokeColor(set.highlightColour.cgColor)
             context.setLineWidth(set.highlightLineWidth)
             
             if set.highlightLineDashLengths != nil

@@ -27,7 +27,7 @@ open class BarLineScatterCandleBubbleRenderer: DataRenderer
     {
         let entryIndex = dataSet.entryIndex(entry: e)
         
-        if Double(entryIndex) >= Double(dataSet.entryCount) * (animator?.phaseX ?? 1.0)
+        if Double(entryIndex) >= Double(dataSet.countOfEntries) * (animator?.phaseX ?? 1.0)
         {
             return false
         }
